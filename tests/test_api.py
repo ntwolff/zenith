@@ -19,8 +19,8 @@ def mock_db_methods():
 
 def test_customer_registration_endpoint(mock_db_methods):
     payload = {
-        "event_id": "test-event",
-        "event_type": "registration",
+        #"event_id": "test-event",
+        #"event_type": "registration",
         "customer_id": "test-customer",
         "timestamp": "2021-01-01T00:00:00Z",
         "email": "test@example.com",
@@ -53,8 +53,8 @@ def test_customer_registration_endpoint(mock_db_methods):
 
 def test_login_event_endpoint(mock_db_methods):
     payload = {
-        "event_id": "test-event",
-        "event_type": "login",
+        #"event_id": "test-event",
+        #"event_type": "login",
         "customer_id": "test-customer",
         "timestamp": "2021-01-01T00:00:00Z",
         "device": {

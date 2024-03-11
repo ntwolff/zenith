@@ -1,8 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from dataclasses import field
 from datetime import datetime
-from uuid import uuid4
 
 #TODO shared model registry between API and event processing
 
@@ -31,15 +29,13 @@ class CustomerEventModel(BaseModel):
     customer_id: str
     device: DeviceModel
     ip_address: IpAddressModel
-    event_id: str
     timestamp: datetime
-    event_type: str
+    #event_id, event_type -> default set by event model
 
 class RegistrationEventModel(CustomerEventModel):
     email: str
     phone_number: str
     person: PersonModel
-    event_type: str
 
 class LoginEventModel(CustomerEventModel):
-    event_type: str
+    pass

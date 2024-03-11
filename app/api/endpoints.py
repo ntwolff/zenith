@@ -13,13 +13,14 @@ def handle_customer_registration_event(event: RegistrationEventModel):
     
     faust_event = RegistrationEvent(
         customer_id=event.customer_id,
-        event_id=event.event_id,
         timestamp=event.timestamp,
         email=event.email,
         phone_number=event.phone_number,
         person=event.person.dict(),
         device=event.device.dict(),
-        ip_address=event.ip_address.dict()
+        ip_address=event.ip_address.dict(),
+        #event_id=default
+        #event_type=default
     )
 
     # Process the event
@@ -32,10 +33,11 @@ def handle_login_event(event: LoginEventModel):
     # Convert the Pydantic model to a Faust record
     faust_event = LoginEvent(
         customer_id=event.customer_id,
-        event_id=event.event_id,
         timestamp=event.timestamp,
         device=event.device.dict(),
-        ip_address=event.ip_address.dict()
+        ip_address=event.ip_address.dict(),
+        #event_id=default
+        #event_type=default
     )
 
     # Process the event
