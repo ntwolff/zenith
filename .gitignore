@@ -39,3 +39,4 @@ Thumbs.db
 
 # Folders
 .old/
+.pytest_cache/

@@ -13,7 +13,7 @@ build/
 *.eggs/
 
 # Environments
-.venv/
+.venv/*
 env/
 venv/
 ENV/
@@ -37,7 +37,7 @@ Thumbs.db
 *.db
 *.sqlite3
 
-# Other
+# Folders
 .old/*
-Docker/
+.pytest_cache/
 .git/*
