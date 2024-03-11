@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from textwrap import dedent
 from neo4j import GraphDatabase
 
 class Neo4jGraphDatabase:
@@ -31,36 +32,42 @@ class Neo4jGraphDatabase:
             )
 
     def create_login_relationship(self, event):
+        query = dedent("""\
+            MATCH (c:Customer {customer_id: $customer_id})
+            CREATE (c)-[:LOGIN {timestamp: $timestamp}]->(:Login)
+        """)
+
         with self.driver.session() as session:
             session.run(
-                """
-                MATCH (c:Customer {customer_id: $customer_id})
-                CREATE (c)-[:LOGIN {timestamp: $timestamp}]->(:Login)
-                """,
+                query,
                 customer_id=event.customer_id,
                 timestamp=event.timestamp
             )
 
     def create_customer_device_relationship(self, customer_id, device_id):
+        query = dedent("""\
+            MATCH (c:Customer {customer_id: $customer_id})
+            MATCH (d:Device {device_id: $device_id})
+            MERGE (c)-[:USES_DEVICE]->(d)
+        """)
+        
         with self.driver.session() as session:
             session.run(
-                """
-                MATCH (c:Customer {customer_id: $customer_id})
-                MATCH (d:Device {device_id: $device_id})
-                MERGE (c)-[:USES_DEVICE]->(d)
-                """,
+                query,
                 customer_id=customer_id,
                 device_id=device_id
             )
 
     def create_customer_ip_address_relationship(self, customer_id, ip):
+        query = dedent("""\
+            MATCH (c:Customer {customer_id: $customer_id})
+            MATCH (i:IpAddress {ip: $ip})
+            MERGE (c)-[:HAS_IP_ADDRESS]->(i)
+        """)
+
         with self.driver.session() as session:
             session.run(
-                """
-                MATCH (c:Customer {customer_id: $customer_id})
-                MATCH (i:IpAddress {ip: $ip})
-                MERGE (c)-[:HAS_IP_ADDRESS]->(i)
-                """,
+                query,
                 customer_id=customer_id,
                 ip=ip
             )

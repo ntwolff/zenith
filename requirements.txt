@@ -3,3 +3,5 @@ fastapi==0.63.0
 neo4j==5.18.0
 uvicorn==0.13.4
 faker==24.1.0
+pytest==8.1.1
+pytest-asyncio==0.23.5.post1

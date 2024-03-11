@@ -37,6 +37,7 @@ Thumbs.db
 *.db
 *.sqlite3
 
-# Folders
-.old/
+# Other
+.old/*
 Docker/
+.git/*
