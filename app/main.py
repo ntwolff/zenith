@@ -1,5 +1,6 @@
 import faust
 from fastapi import FastAPI
+from app.api.endpoints import router as api_router
 
 from .events.models import CustomerRegistrationEvent, LoginEvent
 from .events.processors import CustomerRegistrationEventProcessor, LoginEventProcessor
@@ -7,6 +8,7 @@ from .graph.database import Neo4jGraphDatabase
 
 app = faust.App('zenith-fraud-detection', broker='kafka://kafka:9092')
 fastapi_app = FastAPI()
+fastapi_app.include_router(api_router, prefix="/api", tags=["api"])
 
 # Kafka Topics
 customer_registration_topic = app.topic('customer_registration', value_type=CustomerRegistrationEvent)

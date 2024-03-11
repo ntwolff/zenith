@@ -14,6 +14,22 @@ class Neo4jGraphDatabase:
                 phone_number=event.phone_number
             )
 
+    def create_device_node(self, device):
+        with self.driver.session() as session:
+            session.run(
+                "MERGE (d:Device {device_id: $device_id}) "
+                "SET d.user_agent = $user_agent",
+                device_id=device.device_id,
+                user_agent=device.user_agent
+            )
+
+    def create_ip_address_node(self, ip_address):
+        with self.driver.session() as session:
+            session.run(
+                "MERGE (i:IpAddress {ip: $ip})",
+                ip=ip_address.ip
+            )
+
     def create_login_relationship(self, event):
         with self.driver.session() as session:
             session.run(
@@ -23,4 +39,28 @@ class Neo4jGraphDatabase:
                 """,
                 customer_id=event.customer_id,
                 timestamp=event.timestamp
+            )
+
+    def create_customer_device_relationship(self, customer_id, device_id):
+        with self.driver.session() as session:
+            session.run(
+                """
+                MATCH (c:Customer {customer_id: $customer_id})
+                MATCH (d:Device {device_id: $device_id})
+                MERGE (c)-[:USES_DEVICE]->(d)
+                """,
+                customer_id=customer_id,
+                device_id=device_id
+            )
+
+    def create_customer_ip_address_relationship(self, customer_id, ip):
+        with self.driver.session() as session:
+            session.run(
+                """
+                MATCH (c:Customer {customer_id: $customer_id})
+                MATCH (i:IpAddress {ip: $ip})
+                MERGE (c)-[:HAS_IP_ADDRESS]->(i)
+                """,
+                customer_id=customer_id,
+                ip=ip
             )

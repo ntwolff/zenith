@@ -39,13 +39,25 @@ services:
 
   fraud-detection-system:
     build: .
+    depends_on:
+      - kafka
+      - neo4j
+    networks:
+        - kafka_network
+
+
+  # http://localhost:8000/docs
+  # http://localhost:8000/api/events/customer-registration
+  fraud-detection-api:
+    build: .
+    command: uvicorn app.main:fastapi_app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     depends_on:
       - kafka
       - neo4j
     networks:
-        - kafka_network
+      - kafka_network
 
   fake-data-producer:
     build:

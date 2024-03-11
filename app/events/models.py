@@ -1,7 +1,15 @@
 import faust
 
+class Device(faust.Record):
+    device_id: str
+    user_agent: str
+
+class IpAddress(faust.Record):
+    ip: str
+
 class Event(faust.Record):
-    pass
+    device: Device
+    ip_address: IpAddress
 
 class CustomerRegistrationEvent(Event):
     customer_id: str

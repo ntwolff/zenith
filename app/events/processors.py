@@ -13,6 +13,10 @@ class CustomerRegistrationEventProcessor(EventProcessor):
 
     def process(self, event):
         self.graph_database.create_customer_node(event)
+        self.graph_database.create_device_node(event.device)
+        self.graph_database.create_ip_address_node(event.ip_address)
+        self.graph_database.create_customer_device_relationship(event.customer_id, event.device.device_id)
+        self.graph_database.create_customer_ip_address_relationship(event.customer_id, event.ip_address.ip)
         # Perform other necessary actions
 
 class LoginEventProcessor(EventProcessor):
@@ -21,4 +25,8 @@ class LoginEventProcessor(EventProcessor):
 
     def process(self, event):
         self.graph_database.create_login_relationship(event)
+        self.graph_database.create_device_node(event.device)
+        self.graph_database.create_ip_address_node(event.ip_address)
+        self.graph_database.create_customer_device_relationship(event.customer_id, event.device.device_id)
+        self.graph_database.create_customer_ip_address_relationship(event.customer_id, event.ip_address.ip)
         # Perform other necessary actions
