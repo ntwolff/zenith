@@ -13,6 +13,7 @@ def test_process_customer_registration_event(mock_graph_database):
     processor.process(fake_event)
     # Verify that the database methods were called correctly
     assert mock_graph_database.create_customer_node.called
+    assert mock_graph_database.create_registration_relationship.called
     assert mock_graph_database.create_device_node.called
     assert mock_graph_database.create_ip_address_node.called
     assert mock_graph_database.create_customer_device_relationship.called

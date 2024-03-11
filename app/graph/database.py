@@ -31,6 +31,19 @@ class Neo4jGraphDatabase:
                 ip=ip_address.ip
             )
 
+    def create_registration_relationship(self, event):
+        query = dedent("""\
+            MATCH (c:Customer {customer_id: $customer_id})
+            CREATE (c)-[:REGISTRATION {timestamp: $timestamp}]->(:Registration)
+        """)
+
+        with self.driver.session() as session:
+            session.run(
+                query,
+                customer_id=event.customer_id,
+                timestamp=event.timestamp
+            )
+
     def create_login_relationship(self, event):
         query = dedent("""\
             MATCH (c:Customer {customer_id: $customer_id})

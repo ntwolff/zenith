@@ -14,6 +14,7 @@ login_topic = app.topic('login', value_type=LoginEvent)
 async def produce_fake_customer_registration_event():
     fake_event = CustomerRegistrationEvent(
         customer_id=str(fake.uuid4()),
+        timestamp=fake.unix_time(),
         email=fake.email(),
         phone_number=fake.phone_number(),
         device=Device(

@@ -10,6 +10,7 @@ class IpAddress(faust.Record):
 class Event(faust.Record):
     device: Device
     ip_address: IpAddress
+    timestamp: float
 
 class CustomerRegistrationEvent(Event):
     customer_id: str
@@ -19,5 +20,4 @@ class CustomerRegistrationEvent(Event):
 
 class LoginEvent(Event):
     customer_id: str
-    timestamp: float
     # ... other fields

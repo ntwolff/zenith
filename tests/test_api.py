@@ -9,6 +9,7 @@ def test_customer_registration_endpoint(mock_db_class):
     # Mock the methods used by CustomerRegistrationEventProcessor
     mock_db_instance = mock_db_class.return_value
     mock_db_instance.create_customer_node.return_value = None
+    mock_db_instance.create_registration_relationship.return_value = None
     mock_db_instance.create_device_node.return_value = None
     mock_db_instance.create_ip_address_node.return_value = None
     mock_db_instance.create_customer_device_relationship.return_value = None
@@ -16,6 +17,7 @@ def test_customer_registration_endpoint(mock_db_class):
 
     payload = {
         "customer_id": "test-customer",
+        "timestamp": "1234567890",
         "email": "test@example.com",
         "phone_number": "123456789",
         "device": {

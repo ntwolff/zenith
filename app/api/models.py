@@ -9,6 +9,7 @@ class IpAddressModel(BaseModel):
 
 class CustomerRegistrationEventModel(BaseModel):
     customer_id: str
+    timestamp: float
     email: str
     phone_number: str
     device: DeviceModel

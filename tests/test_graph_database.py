@@ -16,6 +16,7 @@ def mock_neo4j_database():
 def fake_customer_registration_event():
     return CustomerRegistrationEvent(
         customer_id="123",
+        timestamp="1234567890",
         email="test@example.com",
         phone_number="1234567890",
         device=Device(device_id="456", user_agent="Mozilla/5.0"),

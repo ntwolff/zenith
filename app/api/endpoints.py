@@ -11,6 +11,7 @@ def handle_customer_registration_event(event: CustomerRegistrationEventModel):
     # Convert the Pydantic model to a Faust record
     faust_event = CustomerRegistrationEvent(
         customer_id=event.customer_id,
+        timestamp=event.timestamp,
         email=event.email,
         phone_number=event.phone_number,
         device=event.device.dict(),

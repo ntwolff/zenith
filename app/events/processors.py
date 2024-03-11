@@ -13,6 +13,7 @@ class CustomerRegistrationEventProcessor(EventProcessor):
 
     def process(self, event):
         self.graph_database.create_customer_node(event)
+        self.graph_database.create_registration_relationship(event)
         self.graph_database.create_device_node(event.device)
         self.graph_database.create_ip_address_node(event.ip_address)
         self.graph_database.create_customer_device_relationship(event.customer_id, event.device.device_id)
