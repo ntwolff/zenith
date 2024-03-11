@@ -1,14 +1,31 @@
-import logging
 import faust
-from app.models import CustomerRegistrationEvent, EscalationEvent
+from fastapi import FastAPI
 
-# FAUST APP
-app = faust.App('zenith', broker='kafka://localhost:9092')
-app.conf.logging_level = logging.INFO
+from .events.models import CustomerRegistrationEvent, LoginEvent
+from .events.processors import CustomerRegistrationEventProcessor, LoginEventProcessor
+from .graph.database import Neo4jGraphDatabase
 
+app = faust.App('zenith-fraud-detection', broker='kafka://kafka:9092')
+fastapi_app = FastAPI()
 
-## KAFKA TOPICS
-customer_registered_topic = app.topic('event__customer_registration', value_type=CustomerRegistrationEvent)
-escalation_topic = app.topic('event__escalation', value_type=EscalationEvent)
+# Kafka Topics
+customer_registration_topic = app.topic('customer_registration', value_type=CustomerRegistrationEvent)
+login_topic = app.topic('login', value_type=LoginEvent)
 
+# Graph Database
+graph_database = Neo4jGraphDatabase("bolt://neo4j:7687", ("neo4j", "password"))
 
+# Faust Agents
+@app.agent(customer_registration_topic)
+async def process_customer_registration_events(events):
+    processor = CustomerRegistrationEventProcessor(graph_database)
+    async for event in events:
+        processor.process(event)
+        print(f"Consumed fake customer registration event: {event}")
+
+@app.agent(login_topic)
+async def process_login_events(events):
+    processor = LoginEventProcessor(graph_database)
+    async for event in events:
+        processor.process(event)
+        print(f"Consumed fake login event: {event}")

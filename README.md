@@ -1,16 +1,19 @@
-# Zenith Event Intelligence
-This is a poc fraud detection system that processes customer events in real-time using Kafka, Faust, Neo4j, RocksDB, and FastAPI.
+# README.md
+# Zenith Fraud Detection System
 
-## Prerequisites
+The Zenith Fraud Detection System is a proof-of-concept application that demonstrates real-time fraud detection using Kafka, Faust, Neo4j, and FastAPI.
 
-- Docker
-- Docker Compose
+## Features
+
+- Process customer registration and login events in real-time
+- Store and analyze customer and event data in a graph database (Neo4j)
+- Expose API endpoints for handling events
 
 ## Installation
 
 1. Clone the repository:
 ```sh
-git clone https://github.com/your-repo/fraud-detection.git
+git clone https://github.com/ntwolff/zenith-fraud-detection.git
 cd fraud-detection
 ```
 
@@ -19,47 +22,21 @@ cd fraud-detection
 docker-compose up -d
 ```
 
-3. Install the Python dependencies:
+To rebuild the Docker images:
 ```sh
-pip install -r requirements.txt
+# docker-compose up --scale fake-data-producer=3
+docker-compose build
 ```
 
-4. Run the Faust application:
+To see the Docker logs:
 ```sh
-faust -A app.main worker -l info
+docker-compose logs -f
 ```
 
-5. Run the FastAPI server:
-```sh
-uvicorn api.endpoints:app --reload
-```
+## Usage
 
-The fraud detection system should now be up and running. You can send customer events to the Kafka topic and the system will process them in real-time, updating the Neo4j graph and RocksDB accordingly. The FastAPI server exposes an endpoint to retrieve customer data along with the associated fraud vectors.
-
-## Local Test Data
-Faust agents in `/tests/fakes` will produce local test data.
-
-```sh
-faust -A tests.fakes.customer_event_producer worker -l info
-```
-
-## Structure
-
-```
-event-intelligence/
-│
-├── app/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── models.py
-│   ├── agents.py
-│   └── graph.py
-│
-├── api/
-│   ├── __init__.py
-│   └── endpoints.py
-│
-├── README.md
-├── requirements.txt
-└── docker-compose.yml
-```
+- Send customer registration events to the Kafka topic `customer_registration`.
+- Send login events to the Kafka topic `login`.
+- Access the API endpoints:
+- POST `/events/customer-registration`: Handle a customer registration event.
+- POST `/events/login`: Handle a login event.

@@ -13,7 +13,7 @@ build/
 *.eggs/
 
 # Environments
-.venv/*
+.venv/
 env/
 venv/
 ENV/
@@ -39,3 +39,4 @@ Thumbs.db
 
 # Folders
 .old/
+Docker/

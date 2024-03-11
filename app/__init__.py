@@ -1,2 +1,1 @@
-from dotenv import load_dotenv
-load_dotenv()
+from .main import app, fastapi_app
