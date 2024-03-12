@@ -1,7 +1,8 @@
 # This file contains the Pydantic models for requests and responses in the FastAPI app.
+# @TODO: unified model registry with registry service - https://marcosschroh.github.io/python-schema-registry-client/faust/
 
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
 
 class DeviceModel(BaseModel):
@@ -32,9 +33,16 @@ class CustomerModel(BaseModel):
 class EventModel(BaseModel):
     id: str
     type: str
-    timestamp: datetime
+    timestamp: int
 
 class CustomerEventModel(EventModel):
     customer: CustomerModel
     device: DeviceModel
     ip_address: IpAddressModel
+
+class Community(BaseModel):
+    id: int
+    members: List[str]
+    size: int
+    density: float
+    suspicion_score: float

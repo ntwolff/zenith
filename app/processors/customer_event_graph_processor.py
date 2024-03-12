@@ -18,6 +18,9 @@ class CustomerEventGraphProcessor(BaseProcessor):
         device = event.device
         ip_address = event.ip_address
 
+        #derived properties
+        customer.last_active_at = event.timestamp
+
         #event and customer
         self.event_service.create(event)
         self.customer_service.upsert(customer)

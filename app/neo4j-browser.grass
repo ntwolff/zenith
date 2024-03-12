@@ -1,0 +1,67 @@
+// Grass file for Zenith Fraud Detection System
+
+// Node Styling
+node {
+  diameter: 50px;
+  color: #2C3E50;
+  border-color: #34495E;
+  border-width: 2px;
+  text-color-internal: #FFFFFF;
+  font-size: 10px;
+}
+
+node.Customer {
+  color: #1ABC9C;
+}
+
+node.IpAddress {
+  color: #3498DB;
+}
+
+node.Device {
+  color: #F39C12;
+}
+
+node.Event {
+  color: #9B59B6;
+}
+
+node.Address {
+  color: #16A085;
+}
+
+relationship {
+  color: #7F8C8D;
+  shaft-width: 3px;
+  font-size: 8px;
+  padding: 3px;
+  text-color-external: #FFFFFF;
+  text-color-internal: #FFFFFF;
+}
+
+relationship.PERFORMS {
+  color: #2ECC71;
+}
+
+relationship.USED {
+  color: #3498DB;
+}
+
+relationship.HAS {
+  color: #F1C40F;
+}
+
+relationship.RESIDES_AT {
+  color: #8E44AD;
+}
+
+// Diagram Layouts
+layout {
+  name: cose
+}
+
+// Diagram Captions
+caption {
+  title: "Zenith Fraud Detection System Graph Visualization";
+  title-color: #FFFFFF;
+}

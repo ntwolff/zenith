@@ -9,7 +9,7 @@ from uuid import uuid4
 class Event(faust.Record, abstract=True, serializer='json'):
     id: str = field(default=str(uuid4()))
     type: str = field(default="unknown")
-    timestamp: datetime = field(default=datetime.now())
+    timestamp: int = field(default=int(datetime.now().timestamp()))
 
 class CustomerEvent(Event, serializer='json'):
     customer: Customer

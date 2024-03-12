@@ -17,7 +17,7 @@ def fake_customer_event():
     return CustomerEvent(
         id="123",
         type="registration",
-        timestamp="2020-01-01T00:00:00",
+        timestamp=1710252476000,
         customer=Customer(
             id="123",
             email="test@example.com",

@@ -36,7 +36,8 @@ docker-compose logs -f
 
 - Send customer registration events to the Kafka topic `customer_registration`.
 - Send login events to the Kafka topic `login`.
-- Access the API endpoints:
-- POST `/events/customer-registration`: Handle a customer registration event.
-- POST `/events/login`: Handle a login event.
+- Access the API endpoints (`http://localhost:8000/docs` locally):
+- POST `/events/customer-event`: Handle a customer event (login, registration).
+- POST `/fraud/shared-ip`: Find shared ip addresses from the graph in near real-time.
+- POST `/fraud/risk-scores`: Graph pagerank algorithm
 - Test via `pytest tests/`

@@ -12,3 +12,4 @@ class Customer(faust.Record, serializer='json'):
     date_of_birth: Optional[datetime]
     ssn: Optional[str]
     address: Optional[Address]
+    last_active_at: Optional[datetime]
