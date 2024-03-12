@@ -1,8 +1,9 @@
-from .address import Address
-from .customer import Customer
-from .device import Device
-from .event import Event, CustomerEvent
-from .ip_address import IpAddress
+from .address import Address, AddressModel
+from .customer import Customer, CustomerModel
+from .device import Device, DeviceModel
+from .event import Event, CustomerEvent, EventModel, CustomerEventModel
+from .ip_address import IpAddress, IpAddressModel
+from .community import CommunityModel
 
 # @TODO: unified model registry with registry service
 # add image to docker: confluentinc/cp-schema-registry:latest

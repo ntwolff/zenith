@@ -5,7 +5,7 @@ from app.main import fastapi_app
 
 client = TestClient(fastapi_app)
 
-def test_events__customer_event_endpoint(mock_event_db_methods):
+def test_events_customer_event_endpoint(mock_event_db_methods):
     payload = {
         "id": "test-event",
         "type": "registration",
@@ -38,15 +38,15 @@ def test_events__customer_event_endpoint(mock_event_db_methods):
     response = client.post("/api/events/customer-event", json=payload)
     assert response.status_code == 200
 
-def test_fraud__shared_ip_endpoint(mock_fraud_db_methods):
+def test_fraud_shared_ip_endpoint(mock_fraud_db_methods):
     response = client.get("/api/fraud/shared-ip?minutes=60")
     assert response.status_code == 200
 
-def test_fraud__risk_scoes(mock_fraud_db_methods):
+def test_fraud_risk_scoes(mock_fraud_db_methods):
     response = client.get("/api/fraud/risk-scores")
     assert response.status_code == 200
 
-def test_fraud__community_detection(mock_fraud_db_methods):
+def test_fraud_community_detection(mock_fraud_db_methods):
     response = client.get("/api/fraud/community-detection")
     assert response.status_code == 200
 

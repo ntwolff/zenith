@@ -1,61 +1,48 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from typing import List
 from app.api.endpoints import graph_database
-from app.api.models import Community
+from app.models import CommunityModel
 
 router = APIRouter()
 
 @router.get("/shared-ip")
 def detect_shared_ip(minutes: int = 60):
-    query = """
-        MATCH (c1:Customer)-[:USED]->(i:IpAddress)<-[:USED]-(c2:Customer)
-        WHERE c1 <> c2
-        AND c1.last_active_at > datetime() - duration({minutes: $minutes})
-        AND c2.last_active_at > datetime() - duration({minutes: $minutes})
-        RETURN c1.id AS customer1, c2.id AS customer2, i.id AS ip_address
-    """
+    if minutes <= 0:
+        raise HTTPException(status_code=400, detail="Minutes must be a positive integer")
+
+    query = get_shared_ip_query(minutes)
     
-    with graph_database.driver.session() as session:
-        results = session.run(query, minutes=minutes)
+    try:
+        with graph_database.driver.session() as session:
+            results = session.run(query, minutes=minutes)
+            
+            # Process the records and return the results
+            shared_ip_results = [{
+                "customer1": record["customer1"], 
+                "customer2": record["customer2"],
+                "ip_address": record["ip_address"]
+            } for record in results]
         
-        # Process the records and return the results
-        shared_ip_results = [{
-            "customer1": record["customer1"], 
-            "customer2": record["customer2"],
-            "ip_address": record["ip_address"]
-        } for record in results]
-    
-    return {"results": shared_ip_results}
+        return {"results": shared_ip_results}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 @router.get("/risk-scores")
 def calculate_risk_scores():
-    #https://neo4j.com/blog/graph-algorithms-neo4j-pagerank/
-    with graph_database.driver.session() as session:
-        query = """
-            CALL gds.graph.project('fraud-graph', ['Customer', 'Device', 'IpAddress'], {
-                PERFORMS: {
-                    orientation: 'UNDIRECTED'
-                },
-                USED: {
-                    orientation: 'UNDIRECTED'    
-                }
-            })
-            YIELD graphName AS graph, nodeProjection AS nodes, relationshipProjection AS rels
+    query = get_risk_scores_query()
+    
+    try:
+        with graph_database.driver.session() as session:
+            result = session.run(query)
+            records = result.data()
             
-            CALL gds.pageRank.stream(graph)
-            YIELD nodeId, score
-            RETURN gds.util.asNode(nodeId).id AS id, score
-            ORDER BY score DESC
-        """
-        
-        result = session.run(query)
-        records = result.data()
-        
-        risk_scores = [{"id": record["id"], "score": record["score"]} for record in records]
-        
-        return {"risk_scores": risk_scores}
+            risk_scores = [{"id": record["id"], "score": record["score"]} for record in records]
+            
+            return {"risk_scores": risk_scores}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-@router.get("/community-detection", response_model=List[Community])
+@router.get("/community-detection", response_model=List[CommunityModel])
 def detect_suspicious_communities(min_size: int = 5, min_density: float = 0.5, min_suspicion_score: float = 0.7):
     # Project the fraud graph with relevant node labels and relationship types
     project_query = """
@@ -113,12 +100,39 @@ def detect_suspicious_communities(min_size: int = 5, min_density: float = 0.5, m
                 suspicion_score = calculate_suspicion_score(members)
 
                 if suspicion_score >= min_suspicion_score:
-                    community = Community(id=community_id, members=members, size=size, density=density, suspicion_score=suspicion_score)
+                    community = CommunityModel(id=community_id, members=members, size=size, density=density, suspicion_score=suspicion_score)
                     suspicious_communities.append(community)
 
     return suspicious_communities
 
-# helpers
+# HELPERS
+
+def get_shared_ip_query(minutes: int):
+    return """
+        MATCH (c1:Customer)-[:USED]->(i:IpAddress)<-[:USED]-(c2:Customer)
+        WHERE c1 <> c2
+        AND c1.last_active_at > datetime() - duration({minutes: $minutes})
+        AND c2.last_active_at > datetime() - duration({minutes: $minutes})
+        RETURN c1.id AS customer1, c2.id AS customer2, i.id AS ip_address
+    """
+
+def get_risk_scores_query():
+    return """
+        CALL gds.graph.project('fraud-graph', ['Customer', 'Device', 'IpAddress'], {
+            PERFORMS: {
+                orientation: 'UNDIRECTED'
+            },
+            USED: {
+                orientation: 'UNDIRECTED'    
+            }
+        })
+        YIELD graphName AS graph, nodeProjection AS nodes, relationshipProjection AS rels
+        
+        CALL gds.pageRank.stream(graph)
+        YIELD nodeId, score
+        RETURN gds.util.asNode(nodeId).id AS id, score
+        ORDER BY score DESC
+    """
 
 def calculate_suspicion_score(members: List[str]) -> float:
     # Implement the logic to calculate the suspicion score based on domain knowledge and heuristics

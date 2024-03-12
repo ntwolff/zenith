@@ -22,3 +22,10 @@ class CustomerService(BaseService):
             MERGE (c)-[r:{relationship_type}]->(o)
         """
         self.db.execute_query(query, customer_id=customer.id, object_id=related_object.id)
+
+    def mark_as_risky(self, customer_id: str, reason: str):
+        query = """
+            MATCH (c:Customer {id: $customer_id})
+            SET c.risky = True, c.risky_since = datetime(), c.risky_reason = $reason
+        """
+        self.db.execute_query(query, customer_id=customer_id, reason=reason)

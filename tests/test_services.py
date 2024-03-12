@@ -38,27 +38,37 @@ def fake_customer_event():
         ip_address=IpAddress(id="000.00.0.00", ipv4="000.00.0.00")
     )
 
-def test_device_service(mock_graph_database, fake_event=fake_customer_event()):
+def test_device_service_upsert(mock_graph_database, fake_event=fake_customer_event()):
     device_service = DeviceService(mock_graph_database)
     device_service.upsert(fake_event.device)
     assert mock_graph_database.execute_query.called
 
-def test_ip_address_service(mock_graph_database, fake_event=fake_customer_event()):
+def test_ip_address_service_upsert(mock_graph_database, fake_event=fake_customer_event()):
     ip_address_service = IpAddressService(mock_graph_database)
     ip_address_service.upsert(fake_event.ip_address)
     assert mock_graph_database.execute_query.called
 
-def test_address_service(mock_graph_database, fake_event=fake_customer_event()):
+def test_ip_address_service_mark_as_risky(mock_graph_database):
+    ip_address_service = IpAddressService(mock_graph_database)
+    ip_address_service.mark_as_risky("192.168.1.1", "High Velocity IP")
+    assert mock_graph_database.execute_query.called
+
+def test_address_service_upsert(mock_graph_database, fake_event=fake_customer_event()):
     address_service = AddressService(mock_graph_database)
     address_service.upsert(fake_event.customer.address)
     assert mock_graph_database.execute_query.called
 
-def test_customer_service(mock_graph_database, fake_event=fake_customer_event()):
+def test_customer_service_upsert(mock_graph_database, fake_event=fake_customer_event()):
     customer_service = CustomerService(mock_graph_database)
     customer_service.upsert(fake_event.customer)
     assert mock_graph_database.execute_query.called
 
-def test_event_service(mock_graph_database, fake_event=fake_customer_event()):
+def test_customer_service_mark_as_risky(mock_graph_database):
+    customer_service = CustomerService(mock_graph_database)
+    customer_service.mark_as_risky("customer_id", "High Velocity Logins")
+    assert mock_graph_database.execute_query.called
+
+def test_event_service_create(mock_graph_database, fake_event=fake_customer_event()):
     event_service = EventService(mock_graph_database)
     event_service.create(fake_event)
     assert mock_graph_database.execute_query.called
