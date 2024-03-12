@@ -1,13 +1,12 @@
-# README.md
-# Zenith Fraud Detection System
+# Zenith - Streaming Fraud Detection System
 
-The Zenith Fraud Detection System is a proof-of-concept application that demonstrates real-time fraud detection using Kafka, Faust, Neo4j, and FastAPI.
+A proof-of-concept application that demonstrates real-time fraud detection using Kafka/Faust, Neo4j, and FastAPI.
 
 ## Features
 
-- Process customer registration and login events in real-time
-- Store and analyze customer and event data in a graph database (Neo4j)
-- Expose API endpoints for handling events
+- Process events in real-time
+- Store and analyze data in a graph database (Neo4j)
+- Expose API endpoints for handling events & analytics
 
 ## Installation
 
@@ -19,12 +18,12 @@ cd fraud-detection
 
 2. Start the services using Docker Compose:
 ```sh
+# docker-compose up --scale fake-data-producer=3
 docker-compose up -d
 ```
 
 To rebuild the Docker images:
 ```sh
-# docker-compose up --scale fake-data-producer=3
 docker-compose build
 ```
 
