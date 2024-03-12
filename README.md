@@ -40,3 +40,4 @@ docker-compose logs -f
 - Access the API endpoints:
 - POST `/events/customer-registration`: Handle a customer registration event.
 - POST `/events/login`: Handle a login event.
+- Test via `pytest tests/`

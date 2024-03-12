@@ -1,41 +1,40 @@
+# This file contains the Pydantic models for requests and responses in the FastAPI app.
+
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
 
-#TODO shared model registry between API and event processing
-
 class DeviceModel(BaseModel):
-    device_id: str
+    id: str
     user_agent: str
 
 class IpAddressModel(BaseModel):
-    ip: str
+    id: str
+    ipv4: str
 
 class AddressModel(BaseModel):
-    address_id: str
-    street_address: str
+    id: str
+    street: str
     city: str
     state: str
-    zip_code: str
+    zip: str
 
-class PersonModel(BaseModel):
-    first_name: str
-    last_name: str
-    date_of_birth: datetime
-    ssn: str
+class CustomerModel(BaseModel):
+    id: str
+    email: Optional[str]
+    phone: Optional[str]
+    first_name: Optional[str]
+    last_name: Optional[str]
+    date_of_birth: Optional[datetime]
+    ssn: Optional[str]
     address: Optional[AddressModel]
 
-class CustomerEventModel(BaseModel):
-    customer_id: str
+class EventModel(BaseModel):
+    id: str
+    type: str
+    timestamp: datetime
+
+class CustomerEventModel(EventModel):
+    customer: CustomerModel
     device: DeviceModel
     ip_address: IpAddressModel
-    timestamp: datetime
-    #event_id, event_type -> default set by event model
-
-class RegistrationEventModel(CustomerEventModel):
-    email: str
-    phone_number: str
-    person: PersonModel
-
-class LoginEventModel(CustomerEventModel):
-    pass

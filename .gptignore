@@ -39,5 +39,5 @@ Thumbs.db
 
 # Folders
 .old/*
-.pytest_cache/
+.pytest_cache/*
 .git/*
