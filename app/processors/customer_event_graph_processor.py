@@ -1,11 +1,11 @@
 from app.processors.base import BaseProcessor
 from app.models.event import CustomerEvent
 from app.services import CustomerService, DeviceService, IpAddressService, EventService, AddressService
+from app.database.database_interface import DatabaseInterface
 
 class CustomerEventGraphProcessor(BaseProcessor):
-    def __init__(self, db):
+    def __init__(self, db: DatabaseInterface):
         super().__init__(db)
-        #initialize services
         self.customer_service = CustomerService(self.db)
         self.device_service = DeviceService(self.db)
         self.ip_address_service = IpAddressService(self.db)

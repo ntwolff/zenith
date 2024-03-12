@@ -1,9 +1,10 @@
 from fastapi import APIRouter, HTTPException
+from app.database.neo4j_database import Neo4jDatabase
+from app.models.community import CommunityModel
 from typing import List
-from app.api.endpoints import graph_database
-from app.models import CommunityModel
 
 router = APIRouter()
+graph_database = Neo4jDatabase()
 
 @router.get("/shared-ip")
 def detect_shared_ip(minutes: int = 60):

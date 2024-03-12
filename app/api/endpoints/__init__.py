@@ -1,3 +1,4 @@
-from app.graph.database import Neo4jGraphDatabase
+from app.database.neo4j_database import Neo4jDatabase
 
-graph_database = Neo4jGraphDatabase()
+# Neo4j
+graph_database = Neo4jDatabase()
