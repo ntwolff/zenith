@@ -38,8 +38,8 @@ def test_events_customer_event_endpoint(mock_event_db_methods):
     response = client.post("/api/events/customer-event", json=payload)
     assert response.status_code == 200
 
-def test_fraud_shared_ips_endpoint(mock_fraud_db_methods):
-    response = client.get("/api/fraud/shared-ips?minutes=60")
+def test_fraud_centrality_endpoint(mock_fraud_db_methods):
+    response = client.get("/api/fraud/centrality")
     assert response.status_code == 200
 
 def test_fraud_page_rank(mock_fraud_db_methods):

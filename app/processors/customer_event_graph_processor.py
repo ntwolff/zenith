@@ -41,5 +41,9 @@ class CustomerEventGraphProcessor(BaseProcessor):
             address = customer.address
             self.address_service.upsert(address)
             self.customer_service.create_relationship(customer, address, "RESIDES_AT")
+
+        self.customer_service.link_customers_by_pii('email', event.customer.email)
+        self.customer_service.link_customers_by_pii('phone', event.customer.phone)
+        self.customer_service.link_customers_by_pii('ssn', event.customer.ssn)
         
         print(f"Processed event: {event.id}")

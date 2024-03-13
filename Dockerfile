@@ -1,6 +1,6 @@
 FROM python:3.8
 
-RUN apt-get update && apt-get install -y netcat-openbsd
+RUN apt-get update && apt-get install -y netcat-openbsd curl
 
 WORKDIR /app
 
@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["./wait-for-kafka.sh", "kafka", "faust", "-A", "app.main", "worker", "-l", "info"]
+CMD ["./wait-for-neo4j.sh", "neo4j", "./wait-for-kafka.sh", "kafka", "faust", "-A", "app.main", "worker", "-l", "info"]

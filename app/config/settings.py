@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # Kafka settings
     kafka_bootstrap_servers: str = os.environ.get('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
-    kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '8'))
+    kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))
 
     # Neo4j settings
     neo4j_uri: str = os.environ.get('NEO4J_URI', 'bolt://localhost:7687')

@@ -13,6 +13,7 @@ customer_registration_topic = app.topic('customer_event', value_type=CustomerEve
 used_customer_ids = []
 used_ips = []
 used_devices = []
+used_phones = []
 
 @app.timer(interval=1.0)
 async def produce_fake_customer_event():
@@ -39,6 +40,13 @@ async def produce_fake_customer_event():
         device_id = str(fake.uuid4())
         used_devices.append(device_id)
 
+    #phones
+    if (len(used_phones) > 0) & (random.random() < 0.05):
+        phone = random.choice(used_phones)
+    else:
+        phone = fake.phone_number()
+        used_phones.append(phone)
+
     fake_event = CustomerEvent(
         id=str(fake.uuid4()),
         type=event_type,
@@ -46,7 +54,7 @@ async def produce_fake_customer_event():
         customer=Customer(
             id=customer_id,
             email=fake.email(),
-            phone=fake.phone_number(),
+            phone=phone,
             first_name=fake.first_name(),
             last_name=fake.last_name(),
             date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=98),

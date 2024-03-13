@@ -29,3 +29,14 @@ class CustomerService(BaseService):
             SET c.risky = True, c.risky_since = datetime(), c.risky_reason = $reason
         """
         self.db.execute_query(query, customer_id=customer_id, reason=reason)
+
+    def link_customers_by_pii(self, pii_type, pii_value):
+        query = """
+            MATCH (c1:Customer)
+            MATCH (c2:Customer)
+            WHERE c1 <> c2
+            AND c1[$pii_type] = $pii_value
+            AND c2[$pii_type] = $pii_value
+            MERGE (c1)-[:SHARES_PII {type: $pii_type, value: $pii_value}]-(c2)
+        """
+        self.db.execute_query(query, pii_type=pii_type, pii_value=pii_value)
