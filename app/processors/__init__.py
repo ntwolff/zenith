@@ -1,1 +1,4 @@
-from app.processors.customer_event_graph_processor import BaseProcessor, CustomerEventGraphProcessor
+from app.processors.customer_event_graph_processor import CustomerEventGraphProcessor
+from app.processors.high_velocity_ip_processor import HighVelocityIpProcessor
+from app.processors.high_velocity_login_processor import HighVelocityLoginProcessor
+from app.processors.high_velocity_event_processor import HighVelocityEventProcessor

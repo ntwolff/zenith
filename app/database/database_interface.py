@@ -6,5 +6,9 @@ class DatabaseInterface(ABC):
         pass
 
     @abstractmethod
+    def execute_query_async(self, query, **kwargs):
+        pass
+
+    @abstractmethod
     def close(self):
         pass

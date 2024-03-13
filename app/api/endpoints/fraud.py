@@ -1,3 +1,4 @@
+from app.config.settings import settings
 from fastapi import APIRouter, HTTPException
 from app.database.neo4j_database import Neo4jDatabase
 from app.models.community import CommunityModel
@@ -7,7 +8,7 @@ router = APIRouter()
 graph_database = Neo4jDatabase()
 
 @router.get("/shared-ip")
-def detect_shared_ip(minutes: int = 60):
+def detect_shared_ip(minutes: int = settings.high_velocity_ip_window_size):
     if minutes <= 0:
         raise HTTPException(status_code=400, detail="Minutes must be a positive integer")
 
