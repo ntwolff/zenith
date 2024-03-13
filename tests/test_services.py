@@ -15,11 +15,11 @@ def mock_graph_database():
 
 def fake_customer_event():
     return CustomerEvent(
-        id="123",
+        event_id="123",
         type="registration",
         timestamp=1710252476000,
         customer=Customer(
-            id="123",
+            customer_id="123",
             email="test@example.com",
             phone="1234567890",
             first_name="John",
@@ -27,15 +27,15 @@ def fake_customer_event():
             date_of_birth="1990-01-01",
             ssn="123-45-6789",
             address=Address(
-                id="456",
+                address_id="456",
                 street="123 Main St",
                 city="Springfield",
                 state="IL",
                 zip="62701"
             )
         ),
-        device=Device(id="456",user_agent="Mozilla/5.0"),
-        ip_address=IpAddress(id="000.00.0.00", ipv4="000.00.0.00")
+        device=Device(device_id="456",user_agent="Mozilla/5.0"),
+        ip_address=IpAddress(ip_address_id="000.00.0.00", ipv4="000.00.0.00")
     )
 
 def test_device_service_upsert(mock_graph_database, fake_event=fake_customer_event()):

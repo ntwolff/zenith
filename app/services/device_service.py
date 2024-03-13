@@ -4,8 +4,8 @@ from .base_service import BaseService
 class DeviceService(BaseService):
     def upsert(self, device: Device):
         query = """
-            MERGE (d:Device {id: $id})
+            MERGE (d:Device {device_id: $id})
             ON CREATE SET d += $properties
             ON MATCH SET d += $properties
         """
-        self.db.execute_query(query, id=device.id, properties=device.asdict())
+        self.db.execute_query(query, id=device.device_id, properties=device.asdict())

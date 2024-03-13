@@ -1,7 +1,8 @@
 from fastapi import APIRouter
-from app.models import CustomerEvent, Customer, Address, Device, IpAddress, CustomerEventModel
+from app.models import CustomerEvent, CustomerEventModel
 from app.processors import CustomerEventGraphProcessor
 from app.api.endpoints import graph_database
+import random
 
 router = APIRouter()
 
@@ -17,7 +18,7 @@ def handle_customer_event(event: CustomerEventModel):
 def get_graph_data():
     query = """
         MATCH (c:Customer)-[r]->(other)
-        RETURN ID(c) as c_id, c, ID(other) as other_id, other, r
+        RETURN c, other, r
         LIMIT 250
     """
     
@@ -25,44 +26,57 @@ def get_graph_data():
         results = session.run(query)
         nodes = []
         edges = []
-
-        print (results)
-
+        
+        # Generate random positions for nodes
+        positions = {}
+        
         for record in results:
-            source_node_id = record['c_id']
             source_node = record['c']
-            target_node_id = record['other_id']
             target_node = record['other']
             relationship = record['r']
-
+            
+            # Generate random positions if not already assigned
+            if source_node.id not in positions:
+                positions[source_node.id] = (random.uniform(0, 1), random.uniform(0, 1))
+            if target_node.id not in positions:
+                positions[target_node.id] = (random.uniform(0, 1), random.uniform(0, 1))
+            
             source_node_data = {
                 'data': {
-                    'id': source_node_id,
+                    'id': source_node.id,
                     'label': list(source_node.labels)[0],
-                    **dict(source_node)
-                }
+                    'properties': {**dict(source_node)}
+                },
+                'x': positions[source_node.id][0],
+                'y': positions[source_node.id][1]
             }
             target_node_data = {
                 'data': {
-                    'id': target_node_id,
+                    'id': target_node.id,
                     'label': list(target_node.labels)[0],
-                    **dict(target_node)
-                }
+                    'properties': {**dict(target_node)}
+                },
+                'x': positions[target_node.id][0],
+                'y': positions[target_node.id][1]
             }
             edge_data = {
                 'data': {
-                    'source': source_node_id,
-                    'target': target_node_id,
+                    'source': source_node.id,
+                    'target': target_node.id,
                     'type': type(relationship).__name__,
-                    **dict(relationship)
-                }
+                    'properties': {**dict(relationship)}
+                },
+                'x1': positions[source_node.id][0],
+                'y1': positions[source_node.id][1],
+                'x2': positions[target_node.id][0],
+                'y2': positions[target_node.id][1]
             }
-
+            
             if source_node_data not in nodes:
                 nodes.append(source_node_data)
             if target_node_data not in nodes:
                 nodes.append(target_node_data)
             if edge_data not in edges:
                 edges.append(edge_data)
-
-        return {'elements': nodes + edges}
+        
+        return {'elements': {'nodes': nodes, 'edges': edges}}

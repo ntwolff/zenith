@@ -7,11 +7,11 @@ client = TestClient(fastapi_app)
 
 def test_events_customer_event_endpoint(mock_event_db_methods):
     payload = {
-        "id": "test-event",
+        "event_id": "test-event",
         "type": "registration",
         "timestamp": "1710252476000",
         "customer": {
-            "id": "test-customer",
+            "customer_id": "test-customer",
             "email": "test@example.com",
             "phone": "123456789",
             "first_name": "John",
@@ -19,7 +19,7 @@ def test_events_customer_event_endpoint(mock_event_db_methods):
             "date_of_birth": "1990-01-01",
             "ssn": "123-45-6789",
             "address": {
-                "id": "test-address",
+                "address_id": "test-address",
                 "street": "123 Main St",
                 "city": "Springfield",
                 "state": "IL",
@@ -27,11 +27,11 @@ def test_events_customer_event_endpoint(mock_event_db_methods):
             }
         },
         "device": {
-            "id": "test-device",
+            "device_id": "test-device",
             "user_agent": "test-agent"
         },
         "ip_address": {
-            "id": "192.168.1.1",
+            "ip_address_id": "192.168.1.1",
             "ipv4": "192.168.1.1"
         }
     }

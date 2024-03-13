@@ -24,26 +24,27 @@ class CustomerEventGraphProcessor(BaseProcessor):
         #event and customer
         self.event_service.create(event)
         self.customer_service.upsert(customer)
-        self.customer_service.create_relationship(customer, event, "PERFORMS")
+        self.customer_service.create_relationship(customer, "event_id", event.event_id, "PERFORMS")
 
         #device
         self.device_service.upsert(device)
-        self.event_service.create_relationship(event, device, "HAS")
-        self.customer_service.create_relationship(customer, device, "USED")
+        self.event_service.create_relationship(event, "device_id", device.device_id, "HAS")
+        self.customer_service.create_relationship(customer, "device_id", device.device_id, "USED")
 
         #ip_address
         self.ip_address_service.upsert(ip_address)
-        self.event_service.create_relationship(event, ip_address, "HAS")
-        self.customer_service.create_relationship(customer, ip_address, "USED")
+        self.event_service.create_relationship(event, "ip_address_id", ip_address.ip_address_id, "HAS")
+        self.customer_service.create_relationship(customer, "ip_address_id", ip_address.ip_address_id, "USED")
 
         #address
         if customer.address:
-            address = customer.address
+            address = self.address_service.validate_address(customer.address)
             self.address_service.upsert(address)
-            self.customer_service.create_relationship(customer, address, "RESIDES_AT")
+            self.customer_service.create_relationship(customer, "address_id", address.address_id, "RESIDES_AT")
 
         self.customer_service.link_customers_by_pii('email', event.customer.email)
         self.customer_service.link_customers_by_pii('phone', event.customer.phone)
         self.customer_service.link_customers_by_pii('ssn', event.customer.ssn)
+        self.customer_service.link_customers_by_address(event.customer.address)
         
-        print(f"Processed event: {event.id}")
+        print(f"Processed event: {event.event_id}")

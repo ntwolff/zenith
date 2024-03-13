@@ -2,6 +2,9 @@ import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    # Application settings
+    fake_data_generation_enabled: bool = os.environ.get('FAKE_DATA_GENERATION_ENABLED', 'false').lower() == 'true'
+
     # Kafka settings
     kafka_bootstrap_servers: str = os.environ.get('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
     kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))
@@ -24,6 +27,10 @@ class Settings(BaseSettings):
     high_velocity_ip_window_expires: int = int(os.environ.get('HIGH_VELOCITY_IP_WINDOW_EXPIRES', '60'))
     high_velocity_login_window_size: int = int(os.environ.get('HIGH_VELOCITY_LOGIN_WINDOW_SIZE', '5'))
     high_velocity_login_window_expires: int = int(os.environ.get('HIGH_VELOCITY_LOGIN_WINDOW_EXPIRES', '60'))
+
+    # Google Maps settings
+    google_maps_api_key: str = os.environ.get('GOOGLE_MAPS_API_KEY', '')
+    google_maps_enabled: bool = os.environ.get('GOOGLE_MAPS_ENABLED', 'false').lower() == 'true'
 
     class Config:
         env_file = '.env'
