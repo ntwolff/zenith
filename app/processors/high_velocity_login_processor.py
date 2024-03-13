@@ -7,7 +7,7 @@ class HighVelocityLoginProcessor:
             size=window_size,
             expires=window_expires,
         )
-        self.high_velocity_topic = app.topic('high_velocity_event', value_type=dict)
+        self.high_velocity_topic = app.topic('high_velocity_event', value_type=HighVelocityEvent)
 
     async def detect_high_velocity_customer_login(self, stream):
         async for event in stream.filter(lambda e: e.type == "login").group_by(CustomerEvent.customer.id):

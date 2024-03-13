@@ -7,8 +7,8 @@ from typing import List
 router = APIRouter()
 graph_database = Neo4jDatabase()
 
-@router.get("/shared-ip")
-def detect_shared_ip(minutes: int = settings.high_velocity_ip_window_size):
+@router.get("/shared-ips")
+def get_shared_ips(minutes: int = settings.high_velocity_ip_window_size):
     if minutes <= 0:
         raise HTTPException(status_code=400, detail="Minutes must be a positive integer")
 
@@ -29,8 +29,8 @@ def detect_shared_ip(minutes: int = settings.high_velocity_ip_window_size):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-@router.get("/risk-scores")
-def calculate_risk_scores():
+@router.get("/page-rank")
+def get_page_rank():
     query = get_risk_scores_query()
     
     try:
@@ -44,8 +44,8 @@ def calculate_risk_scores():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-@router.get("/community-detection", response_model=List[CommunityModel])
-def detect_suspicious_communities(min_size: int = 5, min_density: float = 0.5, min_suspicion_score: float = 0.7):
+@router.get("/communities", response_model=List[CommunityModel])
+def get_suspicious_communities(min_size: int = 5, min_density: float = 0.5, min_suspicion_score: float = 0.7):
     # Project the fraud graph with relevant node labels and relationship types
     project_query = """
         CALL gds.graph.project('fraud-graph', ['Customer', 'Device', 'IpAddress'], {

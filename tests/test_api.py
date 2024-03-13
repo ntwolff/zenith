@@ -38,16 +38,16 @@ def test_events_customer_event_endpoint(mock_event_db_methods):
     response = client.post("/api/events/customer-event", json=payload)
     assert response.status_code == 200
 
-def test_fraud_shared_ip_endpoint(mock_fraud_db_methods):
-    response = client.get("/api/fraud/shared-ip?minutes=60")
+def test_fraud_shared_ips_endpoint(mock_fraud_db_methods):
+    response = client.get("/api/fraud/shared-ips?minutes=60")
     assert response.status_code == 200
 
-def test_fraud_risk_scoes(mock_fraud_db_methods):
-    response = client.get("/api/fraud/risk-scores")
+def test_fraud_page_rank(mock_fraud_db_methods):
+    response = client.get("/api/fraud/page-rank")
     assert response.status_code == 200
 
-def test_fraud_community_detection(mock_fraud_db_methods):
-    response = client.get("/api/fraud/community-detection")
+def test_fraud_communities(mock_fraud_db_methods):
+    response = client.get("/api/fraud/communities")
     assert response.status_code == 200
 
 @pytest.fixture

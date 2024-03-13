@@ -1,12 +1,12 @@
 # app/main.py
 from app.config.settings import settings
 import faust
-from datetime import timedelta
 from fastapi import FastAPI
 from app.api.router import router as api_router
 from app.processors import CustomerEventGraphProcessor, HighVelocityIpProcessor, HighVelocityLoginProcessor, HighVelocityEventProcessor
 from app.models import CustomerEvent, HighVelocityEvent
 from app.database.neo4j_database import Neo4jDatabase
+from datetime import timedelta
 
 # Kafka / Faust
 app = faust.App(settings.faust_app_name, broker=settings.faust_broker)
@@ -53,12 +53,12 @@ async def detect_high_velocity_customer_login(stream):
     await high_velocity_login_processor.detect_high_velocity_customer_login(stream)
 
 # High Velocity Event Processor
-
 high_velocity_event_processor = HighVelocityEventProcessor(app, graph_database)
 
 @app.agent(high_velocity_topic)
 async def process_high_velocity_event(stream):
     await high_velocity_event_processor.process_high_velocity_event(stream)
+
 
 @fastapi_app.on_event("shutdown")
 def shutdown_event():

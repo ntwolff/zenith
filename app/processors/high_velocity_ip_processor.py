@@ -23,9 +23,9 @@ class HighVelocityIpProcessor:
                 )
                 await self.high_velocity_topic.send(value=payload)
 
-    # Results Cypher Query
-    # ------------------------------------------------
-    # MATCH (i:IpAddress {risky: True})<-[:USED]-(c:Customer)
-    # MATCH (c)-[:PERFORMS]->(e:Event)-[:HAS]->(i)
-    # RETURN i, c, count(e)
-    # RETURN i.ipv4, c.id, c.first_name, c.last_name, c.email, count(e)
+                # Results Cypher Query
+                # ------------------------------------------------
+                # MATCH (i:IpAddress {risky: True})<-[:USED]-(c:Customer)
+                # MATCH (c)-[:PERFORMS]->(e:Event)-[:HAS]->(i)
+                # RETURN i, c, count(e)
+                # RETURN i.ipv4, c.id, c.first_name, c.last_name, c.email, count(e)

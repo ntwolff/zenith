@@ -4,7 +4,7 @@ from .device import Device, DeviceModel
 from .event import Event, CustomerEvent, EventModel, CustomerEventModel
 from .ip_address import IpAddress, IpAddressModel
 from .community import CommunityModel
-from .high_velocity_event import HighVelocityEvent
+from .processors import HighVelocityEvent
 
 # @TODO: unified model registry with registry service
 # add image to docker: confluentinc/cp-schema-registry:latest
