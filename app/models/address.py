@@ -1,8 +1,9 @@
-import faust
+from faust import Record
 from pydantic import BaseModel, Field
 from typing import Optional
 
 class AddressModel(BaseModel):
+    uid: str = Field(..., description="Unique identifier of the object")
     address_id: str = Field(..., description="Hashed value of the address")
     street: str = Field(..., min_length=1, max_length=255, description="Street address")
     city: str = Field(..., min_length=1, max_length=255, description="City")
@@ -13,7 +14,8 @@ class AddressModel(BaseModel):
     is_valid: Optional[bool] = Field(None, description="Indicates if the address is valid")
     validation_id: Optional[str] = Field(None, description="Google Maps response identifier")
 
-class Address(faust.Record, serializer='json'):
+class Address(Record, serializer='json'):
+    uid: str
     address_id: str
     street: str
     city: str
@@ -27,6 +29,7 @@ class Address(faust.Record, serializer='json'):
     @classmethod
     def from_model(cls, model: AddressModel):
         return cls(
+            uid=model.address_id,
             address_id=model.address_id,
             street=model.street,
             city=model.city,
@@ -34,5 +37,9 @@ class Address(faust.Record, serializer='json'):
             zip=model.zip,
             latitude=model.latitude,
             longitude=model.longitude,
-            is_valid=model.is_valid
+            is_valid=model.is_valid,
+            validation_id=model.validation_id
         )
+    
+    def address_string(cls):
+        return f"{cls.street}, {cls.city}, {cls.state} {cls.zip}"

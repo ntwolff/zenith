@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
     # Faust settings
     faust_app_name: str = os.environ.get('FAUST_APP_NAME', 'fraud-detection-system')
-    faust_broker: str = os.environ.get('FAUST_BROKER', 'kafka://fast-data-dev:9092')
+    faust_broker: str = os.environ.get('FAUST_BROKER', 'kafka://kafka:9092')
 
     # Processor settings
     high_velocity_ip_window_size: int = int(os.environ.get('HIGH_VELOCITY_IP_WINDOW_SIZE', '5'))

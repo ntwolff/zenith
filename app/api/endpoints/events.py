@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from app.models import CustomerEvent, CustomerEventModel
-from app.processors import CustomerEventGraphProcessor
-from app.api.endpoints import graph_database
+from app.processors.graph_processor import GraphProcessor
+from app.database.neo4j_database import Neo4jDatabase
 import random
 
 router = APIRouter()
+graph_database = Neo4jDatabase()
 
 @router.post("/customer-event", summary="Create a new CustomerEvent", response_model=None, status_code=201)
 def create_customer_event(event: CustomerEventModel):
@@ -23,7 +24,7 @@ def create_customer_event(event: CustomerEventModel):
     """
     try:
         faust_event = CustomerEvent.from_model(event)
-        processor = CustomerEventGraphProcessor(graph_database)
+        processor = GraphProcessor(graph_database)
         processor.process(faust_event)
         return {"message": "Event processed successfully"}
     except Exception as e:

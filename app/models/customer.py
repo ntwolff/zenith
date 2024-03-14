@@ -1,10 +1,11 @@
-import faust
+from faust import Record
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
 from .address import AddressModel, Address
 
 class CustomerModel(BaseModel):
+    uid: str = Field(..., description="Unique identifier of the object")
     customer_id: str = Field(..., description="Customer ID")
     email: str = Field(..., description="Email address")
     phone: Optional[str] = Field(None, pattern=r'^\+?1?\d{9,15}$', description="Phone number")
@@ -16,7 +17,8 @@ class CustomerModel(BaseModel):
     is_fraud: Optional[bool] = Field(False, description="Marked as fraud")
     last_active_at: Optional[datetime] = Field(None, description="Last customer event timestamp")
 
-class Customer(faust.Record, serializer='json'):
+class Customer(Record, serializer='json'):
+    uid: str
     customer_id: str
     email: Optional[str]
     phone: Optional[str]
@@ -31,6 +33,7 @@ class Customer(faust.Record, serializer='json'):
     @classmethod
     def from_model(cls, model: CustomerModel):
         return cls(
+            uid=model.customer_id,
             customer_id=model.customer_id,
             email=model.email,
             phone=model.phone,

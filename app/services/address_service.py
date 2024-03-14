@@ -4,14 +4,6 @@ from googlemaps import Client
 from app.config.settings import settings
 
 class AddressService(BaseService):
-    def upsert(self, address: Address):
-        query = """
-            MERGE (a:Address {address_id: $id})
-            ON CREATE SET a += $properties
-            ON MATCH SET a += $properties
-        """
-        self.db.execute_query(query, id=address.address_id, properties=address.asdict())
-
     def validate_address(self, address: Address) -> Address:
         if not settings.google_maps_enabled:
             return address

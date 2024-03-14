@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
 import pytest
-from app.services.device_service import DeviceService
 from app.services.ip_address_service import IpAddressService
 from app.services.address_service import AddressService
 from app.services.customer_service import CustomerService
@@ -38,10 +37,6 @@ def fake_customer_event():
         ip_address=IpAddress(ip_address_id="000.00.0.00", ipv4="000.00.0.00")
     )
 
-def test_device_service_upsert(mock_graph_database, fake_event=fake_customer_event()):
-    device_service = DeviceService(mock_graph_database)
-    device_service.upsert(fake_event.device)
-    assert mock_graph_database.execute_query.called
 
 def test_ip_address_service_upsert(mock_graph_database, fake_event=fake_customer_event()):
     ip_address_service = IpAddressService(mock_graph_database)

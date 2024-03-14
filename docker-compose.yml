@@ -1,14 +1,14 @@
 version: '3'
 
 services:
-  fast-data-dev:
+  kafka:
     image: lensesio/box # alt: lensesio/fast-data-dev
     environment:
-      ADV_HOST: fast-data-dev
+      ADV_HOST: kafka
       EULA: "https://licenses.lenses.io/download/lensesdl?id=68c647aa-e20f-11ee-bf14-42010af01003"
       SAMPLEDATA: 0
       KAFKA_LISTENERS: EXTERNAL_SAME_HOST://:29092,INTERNAL://:9092
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://fast-data-dev:9092,EXTERNAL_SAME_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL_SAME_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL_SAME_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
     ports:
@@ -29,35 +29,24 @@ services:
     networks:
       - fraud-detection
 
-  fraud-detection-system:
+  #http://localhost:8000/docs
+  fraud-detection:
     build: .
-    depends_on:
-      - fast-data-dev
-      - neo4j
-    networks:
-      - fraud-detection
-
-
-  # http://localhost:8000/docs
-  # http://localhost:8000/api/events/customer-registration
-  fraud-detection-api:
-    build: .
-    command: uvicorn app.main:fastapi_app --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     depends_on:
-      - fast-data-dev
+      - kafka
       - neo4j
     networks:
       - fraud-detection
 
-  fake-data-producer:
+  fraud-detection-worker:
     build:
       context: .
-      dockerfile: Dockerfile.fake-data-producer
+      dockerfile: Dockerfile.faust-worker
     depends_on:
-      - fast-data-dev
-    restart: on-failure
+      - kafka
+      - neo4j
     networks:
       - fraud-detection
 
