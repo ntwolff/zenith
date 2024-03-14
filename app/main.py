@@ -21,7 +21,14 @@ graph_database = Neo4jDatabase(
 )
 
 # FastAPI
-fastapi_app = FastAPI()
+fastapi_app = FastAPI(
+    title="Fraud Detection API",
+    description="An API for detecting fraudulent activity in near real-time.",
+    version="0.0.1",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json"
+)
 fastapi_app.include_router(api_router, prefix="/api")
 
 @app.agent(customer_event_topic)

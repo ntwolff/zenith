@@ -31,5 +31,8 @@ class Address(faust.Record, serializer='json'):
             street=model.street,
             city=model.city,
             state=model.state,
-            zip=model.zip
+            zip=model.zip,
+            latitude=model.latitude,
+            longitude=model.longitude,
+            is_valid=model.is_valid
         )
