@@ -9,4 +9,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["./wait-for-kafka.sh", "kafka", "faust", "-A", "app.fake_producer", "worker", "-l", "info"]
+CMD ["./wait-for-kafka.sh", "fast-data-dev", "faust", "-A", "app.fake_producer", "worker", "-l", "info"]

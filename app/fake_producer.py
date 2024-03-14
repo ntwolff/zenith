@@ -5,7 +5,7 @@ from datetime import datetime
 from .models import CustomerEvent, Customer, Device, IpAddress, Address
 from app.config.settings import settings
 
-app = faust.App('fake-producer', broker='kafka://kafka:9092')
+app = faust.App('fake-producer', broker=settings.faust_broker)
 fake = Faker('en_US')
 
 # Kafka Topics

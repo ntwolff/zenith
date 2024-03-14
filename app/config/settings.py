@@ -6,7 +6,6 @@ class Settings(BaseSettings):
     fake_data_generation_enabled: bool = os.environ.get('FAKE_DATA_GENERATION_ENABLED', 'false').lower() == 'true'
 
     # Kafka settings
-    kafka_bootstrap_servers: str = os.environ.get('KAFKA_BOOTSTRAP_SERVERS', 'localhost:9092')
     kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))
 
     # Neo4j settings
@@ -20,7 +19,7 @@ class Settings(BaseSettings):
 
     # Faust settings
     faust_app_name: str = os.environ.get('FAUST_APP_NAME', 'fraud-detection-system')
-    faust_broker: str = os.environ.get('FAUST_BROKER', 'kafka://localhost:9092')
+    faust_broker: str = os.environ.get('FAUST_BROKER', 'kafka://fast-data-dev:9092')
 
     # Processor settings
     high_velocity_ip_window_size: int = int(os.environ.get('HIGH_VELOCITY_IP_WINDOW_SIZE', '5'))
