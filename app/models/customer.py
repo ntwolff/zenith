@@ -2,7 +2,7 @@ from faust import Record
 from pydantic import BaseModel, Field
 from datetime import datetime
 from typing import Optional
-from .address import AddressModel, Address
+from app.models.address import AddressModel, Address
 
 class CustomerModel(BaseModel):
     uid: str = Field(..., description="Unique identifier of the object")
@@ -42,5 +42,6 @@ class Customer(Record, serializer='json'):
             date_of_birth=model.date_of_birth,
             ssn=model.ssn,
             address=Address.from_model(model.address) if model.address else None,
-            is_fraud=model.is_fraud
+            is_fraud=model.is_fraud,
+            last_active_at=model.last_active_at
         )

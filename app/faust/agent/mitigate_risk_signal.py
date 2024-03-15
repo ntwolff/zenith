@@ -10,7 +10,7 @@ customer_service = CustomerService(graph_database)
 ip_address_service = IpAddressService(graph_database)
 
 @faust_app.agent(risk_signal_topic)
-async def process_high_velocity_event(signals):
+async def mitigate_risk_signal(signals):
     async for signal in signals:
         if signal.signal == SignalEnum.LOGIN_VELOCITY.value:
             customer_service.mark_as_risky(customer_id=signal.event.customer.customer_id, reason=SignalEnum.LOGIN_VELOCITY)
@@ -18,5 +18,7 @@ async def process_high_velocity_event(signals):
         elif signal.signal == SignalEnum.IP_VELOCITY.value:
             ip_address_service.mark_as_risky(ip_address_id=signal.event.ip_address.ip_address_id, reason=SignalEnum.IP_VELOCITY.value)
             logging.info(f"Processed {SignalEnum.IP_VELOCITY.value} risk signal for customer: {signal.event.ip_address.ip_address_id}") 
+        elif signal.signal == SignalEnum.APPLICATION_FRAUD.value:
+            logging.info("Application fraud signal received.  Not yet implemented.") # @TODO: Implement.
         else:
             raise ValueError(f"Unknown signal type: {signal.signal}")

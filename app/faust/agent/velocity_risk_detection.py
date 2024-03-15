@@ -1,17 +1,9 @@
 from app.faust.app import faust_app
 from app.faust.topic import risk_signal_topic, customer_event_topic
 from app.faust.table import ip_velocity_table, login_velocity_table
-from app.processors.graph_processor import GraphProcessor
-from app.database.neo4j_database import Neo4jDatabase
 from app.models import CustomerEvent, RiskSignal, SignalEnum
 from uuid import uuid4
 import logging
-
-@faust_app.agent(customer_event_topic)
-async def ingest_event(events):
-    async for event in events:
-        processor = GraphProcessor(db=Neo4jDatabase())
-        processor.process(event)
 
 @faust_app.agent(customer_event_topic)
 async def detect_ip_velocity_risk_signal(events):

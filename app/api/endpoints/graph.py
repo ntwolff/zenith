@@ -1,37 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from app.models import CustomerEvent, CustomerEventModel
-from app.processors.graph_processor import GraphProcessor
 from app.database.neo4j_database import Neo4jDatabase
 import random
 
 router = APIRouter()
 graph_database = Neo4jDatabase()
 
-@router.post("/customer-event", summary="Create a new CustomerEvent", response_model=None, status_code=201)
-def create_customer_event(event: CustomerEventModel):
-    """
-    Create a new customer event.
-
-    This endpoint allows you to create a new customer event by providing the necessary event details.
-
-    - **event**: The customer event data including customer information, device information, and IP address.
-
-    Returns:
-    - A success message indicating that the event was processed successfully.
-
-    Raises:
-    - HTTPException (status_code=400): If the provided event data is invalid.
-    """
-    try:
-        faust_event = CustomerEvent.from_model(event)
-        processor = GraphProcessor(graph_database)
-        processor.process(faust_event)
-        return {"message": "Event processed successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.get("/graph", summary="Get graph data for visualization")
+@router.get("/recent", summary="Get graph data for visualization")
 def get_graph_data():
     """
     Get graph data for visualization.

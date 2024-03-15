@@ -1,9 +1,6 @@
-from app.config.settings import settings
 from fastapi import APIRouter, HTTPException
 from app.database.neo4j_database import Neo4jDatabase
 from app.models.community import CommunityModel
-from typing import List
-import uuid
 
 router = APIRouter()
 graph_database = Neo4jDatabase()
@@ -123,6 +120,7 @@ def detect_suspicious_communities(min_size: int = 5, min_density: float = 0.5, m
 def drop_fraud_graph_query(graph_name: str = "fraud-graph"):
     return f"CALL gds.graph.drop('{graph_name}', false) YIELD graphName"
 
+
 def project_fraud_graph_query(graph_name: str = "fraud-graph"):
     return """
         CALL gds.graph.project('fraud-graph', ['Customer', 'Device', 'IpAddress', 'Address'], {
@@ -138,6 +136,7 @@ def project_fraud_graph_query(graph_name: str = "fraud-graph"):
         })
         YIELD graphName AS graph, nodeProjection AS nodes, relationshipProjection AS rels
     """
+
 
 def get_page_rank_scores_query(limit: int = 25):
     return f"""

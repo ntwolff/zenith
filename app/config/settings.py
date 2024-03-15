@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     # Application settings
     fake_data_generation_enabled: bool = os.environ.get('FAKE_DATA_GENERATION_ENABLED', 'false').lower() == 'true'
+    ml_detection_enabled: bool = os.environ.get('ML_DETECTION_ENABLED', 'false').lower() == 'true'
 
     # Kafka settings
     kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))

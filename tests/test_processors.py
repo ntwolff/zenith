@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 import pytest
-from app.processors import CustomerEventGraphProcessor
+from app.processors import GraphEventProcessor
 
 @pytest.fixture
 def mock_graph_database():
@@ -8,7 +8,7 @@ def mock_graph_database():
     return graph_db
 
 def test_process_customer_event(mock_graph_database):
-    processor = CustomerEventGraphProcessor(mock_graph_database)
+    processor = GraphEventProcessor(mock_graph_database)
     fake_event = MagicMock()
     processor.process(fake_event)
     # Verify that the database methods were called correctly
