@@ -16,20 +16,25 @@ git clone https://github.com/ntwolff/zenith-fraud-detection.git
 cd fraud-detection
 ```
 
-2. Start the services using Docker Compose:
+2. Build and start the services using Docker Compose:
 ```sh
-# docker-compose up --scale fake-data-producer=3
-docker-compose up -d
-```
-
-To rebuild the Docker images:
-```sh
-docker-compose build
+# docker-compose up --build -d
+docker-compose up --build
 ```
 
 To see the Docker logs:
 ```sh
 docker-compose logs -f
+```
+
+To stop the services:
+```sh
+docker-compose down
+```
+
+To clean the local environment:
+```sh
+docker system prune -a --volumes
 ```
 
 ## Usage

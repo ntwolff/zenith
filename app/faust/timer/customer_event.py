@@ -5,6 +5,7 @@ from faker import Faker
 from datetime import datetime
 from app.models import CustomerEvent, Customer, Device, IpAddress, Address
 import random
+import logging
 
 fake = Faker('en_US')
 used_customer_ids, used_ips, used_devices, used_phones, used_addresses = [], [], [], [], []
@@ -66,7 +67,7 @@ def generate_record() -> CustomerEvent:
             ipv4=ip_address_id
         )
     )
-    print(f"Produced fake customer registration event: {fake_event.uid}")
+    logging.info(f"Added CustomerEvent: {fake_event.uid}")
     return fake_event
 
 def get_or_create_value(collection, create_func, reuse_probability=0.2):

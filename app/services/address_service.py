@@ -2,6 +2,7 @@ from .base_service import BaseService
 from app.models.address import Address
 from googlemaps import Client
 from app.config.settings import settings
+import logging
 
 class AddressService(BaseService):
     def validate_address(self, address: Address) -> Address:
@@ -46,10 +47,10 @@ class AddressService(BaseService):
                 elif component_type == 'postal_code':
                     address.zip = component_name
 
-            print(f"Address validated: {address}")
+            logging.info(f"Address validated: {address}")
         else:
             address.is_valid = False
-            print(f"Address not validated: {address}")
+            logging.info(f"Address not validated: {address}")
 
         return address
 

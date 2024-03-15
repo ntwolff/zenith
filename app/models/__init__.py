@@ -4,7 +4,8 @@ from .device import Device, DeviceModel
 from .event import Event, CustomerEvent, EventModel, CustomerEventModel
 from .ip_address import IpAddress, IpAddressModel
 from .community import CommunityModel
-from .processors import HighVelocityEvent
+from .risk_signal import RiskSignal, SignalEnum
+from .graph_task import GraphTask, TaskEnum
 
 # @TODO: unified model registry with registry service
 # add image to docker: confluentinc/cp-schema-registry:latest

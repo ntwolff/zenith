@@ -1,15 +1,14 @@
-from app.processors.base import BaseProcessor
 from app.models.event import CustomerEvent
 from app.services import RecordService, CustomerService, EventService, AddressService
 from app.database.database_interface import DatabaseInterface
+import logging
 
-class GraphProcessor(BaseProcessor):
+class GraphProcessor:
     def __init__(self, db: DatabaseInterface):
-        super().__init__(db)
-        self.c_service = CustomerService(self.db)
-        self.e_service = EventService(self.db)
-        self.r_service = RecordService(self.db)
-        self.a_service = AddressService(self.db)
+        self.c_service = CustomerService(db)
+        self.e_service = EventService(db)
+        self.r_service = RecordService(db)
+        self.a_service = AddressService(db)
 
     def process(self, event: CustomerEvent):
         customer = event.customer
@@ -45,4 +44,4 @@ class GraphProcessor(BaseProcessor):
         self.c_service.link_on_pii('phone', event.customer.phone)
         self.c_service.link_on_pii('ssn', event.customer.ssn)
         
-        print(f"Processed event: {event.event_id}")
+        logging.info(f"Processed event: {event.event_id}")

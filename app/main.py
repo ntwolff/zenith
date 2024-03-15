@@ -6,8 +6,6 @@ from app.database.neo4j_database import Neo4jDatabase
 from app.api.router import router as api_router
 import asyncio
 
-graph_database = Neo4jDatabase()
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     faust_app.discover()

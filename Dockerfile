@@ -18,5 +18,3 @@ COPY wait-for-kafka.sh .
 RUN chmod +x wait-for-kafka.sh
 
 CMD ["./wait-for-neo4j.sh", "neo4j", "--", "./wait-for-kafka.sh", "kafka", "--", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-#CMD ["./wait-for-neo4j.sh", "neo4j", "./wait-for-kafka.sh", "fast-data-dev", "faust", "-A", "app.faust.app", "worker", "-l", "info"]
