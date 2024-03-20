@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     # Kafka settings
     kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))
+    kafka_topic_replication_factor: int = int(os.environ.get('KAFKA_TOPIC_REPLICATION_FACTOR', '1'))
 
     # Neo4j settings
     neo4j_uri: str = os.environ.get('NEO4J_URI', 'bolt://localhost:7687')

@@ -9,16 +9,8 @@ app = faust_app = faust.App(
     web_enabled=False,
     autodiscover=True,
     origin="app.faust",
+    topic_partitions=settings.kafka_topic_partitions,
+    topic_replication_factor=settings.kafka_topic_replication_factor,
+    topic_allow_declare=True,
+    consumer_auto_offset_reset="latest",
 )
-
-# @faust_app.on_before_configured.connect
-# def before_configuration(faust_app, **kwargs):
-#     print(f'Faust app {settings.faust_app_name} is being configured')
-
-# @faust_app.on_after_configured.connect
-# def after_configuration(faust_app, **kwargs):
-#     print(f'Faust app {settings.faust_app_name} has been configured.')
-
-# @faust_app.on_worker_init.connect
-# def on_worker_init(faust_app, **kwargs):
-#     print(f'Working starting for faust app {settings.faust_app_name}')

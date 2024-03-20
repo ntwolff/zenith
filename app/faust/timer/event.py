@@ -1,112 +1,169 @@
 from app.config.settings import settings
-from app.faust.app import faust_app
-from app.faust.topic.customer_event import customer_event_topic
-from app.faust.topic.application_event import application_event_topic
-from faker import Faker
-from datetime import datetime
-from app.models import Customer, Device, Address
-from app.models.event import Event, CustomerEvent, ApplicationEvent
-from app.models.application import Application, SourceEnum, EmploymentStatusEnum
+from app.faust.app import app
+from app.faust.topic import customer_event_topic, application_event_topic
+from app.models import CustomerEvent, ApplicationEvent, CustomerEventTypeEnum, ApplicationEventTypeEnum, Customer, Device, Address
+from app.models.application import Application, EmploymentStatusEnum, SourceEnum
 from app.models.ip_address import IpAddress
+from faker import Faker
 import random
+import asyncio
 import logging
 
-fake = Faker('en_US')
-used_customer_ids, used_ips, used_devices, used_phones, used_addresses = [], [], [], [], []
+# Initialize Faker
+fake = Faker()
 
-@faust_app.timer(2.0)
-async def produce_fake_customer_events():
+# Dictionary to store customer states and reusable values
+customer_states = {}
+used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], []
+
+@app.timer(2.0)
+async def produce_fake_events() -> None:
+    """Produce fake customer and application events."""
     if not settings.fake_data_generation_enabled:
         return
 
-    customer_event = await generate_customer_event()
-    await customer_event_topic.send(value=customer_event)
-    
-    application_event = await generate_application_event(customer_event)
-    await application_event_topic.send(value=application_event)
+    # Randomly decide whether to create a new customer or use an existing one
+    if random.random() < 0.2 or not customer_states:
+        # Create a new customer
+        customer_event = await generate_fake_customer_registration()
+        await send_event(customer_event_topic, customer_event)
+        customer_states[customer_event.customer.uid] = CustomerEventTypeEnum.REGISTRATION
+    else:
+        # Use an existing customer
+        customer_id = random.choice(list(customer_states.keys()))
+        customer_state = customer_states[customer_id]
 
-async def generate_customer_event() -> CustomerEvent:
-    customer_id = get_or_create_value(used_customer_ids, lambda: str(fake.uuid4()))
-    event_type = "login" if customer_id in used_customer_ids else "registration"
+        if customer_state == CustomerEventTypeEnum.REGISTRATION:
+            # Simulate customer login event
+            customer_event = await generate_fake_customer_login(customer_id)
+            await send_event(customer_event_topic, customer_event)
+            customer_states[customer_id] = CustomerEventTypeEnum.LOGIN
+        elif customer_state == CustomerEventTypeEnum.LOGIN:
+            # Randomly decide whether to create a login event or an application event
+            event_type = random.choice([CustomerEventTypeEnum.LOGIN, ApplicationEventTypeEnum.SUBMISSION])
+            if event_type == CustomerEventTypeEnum.LOGIN:
+                # Randomly decide whether to create a login event
+                if random.random() < 0.3:
+                    customer_event = await generate_fake_customer_login(customer_id)
+                    await send_event(customer_event_topic, customer_event)
+            else:
+                # Randomly decide whether to create an application event
+                if random.random() < 0.3:
+                    application_event = await generate_fake_application_event(customer_id)
+                    await send_event(application_event_topic, application_event)
 
-    ip_address_id = get_or_create_value(used_ips, lambda: str(fake.ipv4()))
-    device_id = get_or_create_value(used_devices, lambda: str(fake.uuid4()))
-    phone = get_or_create_value(used_phones, fake.phone_number)
+async def send_event(topic, event):
+    await topic.send(value=event)
+    logging.info(f"Produced {event.__class__.__name__} {event.type}: {event.uid}")
+
+async def generate_fake_customer_registration() -> CustomerEvent:
+    """Generate a fake customer registration event."""
     event_id = str(fake.uuid4())
+    customer_id = str(fake.uuid4())
+    address_id = str(fake.uuid4())
     address = get_or_create_value(used_addresses, lambda: Address(
-        uid=str(fake.uuid4()),
-        address_id=str(fake.uuid4()),
+        uid=address_id,
+        address_id=address_id,
         street=fake.street_address(),
         city=fake.city(),
-        state=fake.state(),
+        state=fake.state_abbr(),
         zip=fake.zipcode(),
-        is_valid=True,
-        latitude=fake.latitude(),
-        longitude=fake.longitude(),
     ))
-
-    if random.random() < 0.05:
-        isFraud = True
-    else:
-        isFraud = False
-
-    fake_customer_event = CustomerEvent(
+    customer = Customer(
+        uid=customer_id,
+        customer_id=customer_id,
+        email=get_or_create_value(used_emails, fake.email),
+        phone=get_or_create_value(used_phones, fake.phone_number),
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
+        date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=80),
+        ssn=fake.ssn(),
+        address=address,
+    )
+    device_id = str(fake.uuid4())
+    device = get_or_create_value(used_devices, lambda: Device(
+        uid=device_id,
+        device_id=device_id,
+        user_agent=fake.user_agent(),
+    ))
+    ip_address_id = str(fake.uuid4())
+    ip_address = get_or_create_value(used_ips, lambda: IpAddress(
+        uid=ip_address_id,
+        ip_address_id=ip_address_id,
+        ipv4=fake.ipv4(),
+    ))
+    return CustomerEvent(
         uid=event_id,
         event_id=event_id,
-        type=event_type,
-        timestamp=int(datetime.now().timestamp()),
-        customer=Customer(
-            uid=customer_id,
-            customer_id=customer_id,
-            email=fake.email(),
-            phone=phone,
-            first_name=fake.first_name(),
-            last_name=fake.last_name(),
-            date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=98),
-            ssn=fake.ssn(),
-            address=address,
-            is_fraud=isFraud
-        ),
-        device=Device(
-            uid=device_id,
-            device_id=device_id,
-            user_agent=fake.user_agent()
-        ),
-        ip_address=IpAddress(
-            uid=ip_address_id,
-            ip_address_id=ip_address_id,
-            ipv4=ip_address_id
-        )
+        type=CustomerEventTypeEnum.REGISTRATION.value,
+        timestamp=int(asyncio.get_running_loop().time()),
+        customer=customer,
+        device=device,
+        ip_address=ip_address,
     )
-    logging.info(f"Added CustomerEvent: {fake_customer_event.uid}")
-    return fake_customer_event
 
-async def generate_application_event(customer_event: CustomerEvent) -> ApplicationEvent:
+async def generate_fake_customer_login(customer_id: str) -> CustomerEvent:
+    """Generate a fake customer login event."""
     event_id = str(fake.uuid4())
-    
-    fake_app_event = ApplicationEvent(
+    device_id = str(fake.uuid4())
+    device = get_or_create_value(used_devices, lambda: Device(
+        uid=device_id,
+        device_id=device_id,
+        user_agent=fake.user_agent(),
+    ))
+    ip_address_id = str(fake.uuid4())
+    ip_address = get_or_create_value(used_ips, lambda: IpAddress(
+        uid=ip_address_id,
+        ip_address_id=ip_address_id,
+        ipv4=fake.ipv4(),
+    ))
+    return CustomerEvent(
         uid=event_id,
         event_id=event_id,
-        type="submission",
-        timestamp=int(datetime.now().timestamp()),
-        customer=customer_event.customer,
-        application=Application(
-            uid=str(fake.uuid4()),
-            application_id=str(fake.uuid4()),
-            source=random.choice(list(SourceEnum)).value,
-            income=random.uniform(10000, 200000),
-            employment_status=random.choice(list(EmploymentStatusEnum)).value
-        ),
-        device=customer_event.device,
-        ip_address=customer_event.ip_address
+        type=CustomerEventTypeEnum.LOGIN.value,
+        timestamp=int(asyncio.get_running_loop().time()),
+        customer=Customer(uid=customer_id, customer_id=customer_id),
+        device=device,
+        ip_address=ip_address,
     )
-    logging.info(f"Added ApplicationEvent: {fake_app_event.uid}")
-    return fake_app_event
 
-def get_or_create_value(collection, create_func, reuse_probability=0.2):
-    if collection and random.random() < reuse_probability:
+async def generate_fake_application_event(customer_id: str) -> ApplicationEvent:
+    """Generate a fake application event."""
+    event_id = str(fake.uuid4())
+    device_id = str(fake.uuid4())
+    device = get_or_create_value(used_devices, lambda: Device(
+        uid=device_id,
+        device_id=device_id,
+        user_agent=fake.user_agent(),
+    ))
+    ip_address_id = str(fake.uuid4())
+    ip_address = get_or_create_value(used_ips, lambda: IpAddress(
+        uid=ip_address_id,
+        ip_address_id=ip_address_id,
+        ipv4=fake.ipv4(),
+    ))
+    application_id = str(fake.uuid4())
+    return ApplicationEvent(
+        uid=event_id,
+        event_id=event_id,
+        type=ApplicationEventTypeEnum.SUBMISSION.value,
+        timestamp=int(asyncio.get_running_loop().time()),
+        customer=Customer(uid=customer_id, customer_id=customer_id),
+        application=Application(
+            uid=application_id,
+            application_id=application_id,
+            source=fake.random_element(list(SourceEnum)),
+            income=fake.random_int(min=10000, max=200000),
+            employment_status=fake.random_element(list(EmploymentStatusEnum)),
+        ),
+        device=device,
+        ip_address=ip_address,
+    )
+
+def get_or_create_value(collection, create_func):
+    if collection and random.random() < 0.2:
         return random.choice(collection)
     else:
-        value = create_func()
+        value = create_func() if callable(create_func) else create_func
         collection.append(value)
         return value

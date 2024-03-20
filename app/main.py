@@ -8,10 +8,10 @@ import asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    faust_app.discover()
-    await asyncio.ensure_future(faust_app.start(), loop=asyncio.get_event_loop())
+    #faust_app.discover()
+    #await asyncio.ensure_future(faust_app.start(), loop=asyncio.get_event_loop())
     yield
-    await faust_app.stop()
+    #await faust_app.stop()
 
 # FastAPI
 app = fastapi_app = FastAPI(

@@ -12,13 +12,13 @@ A proof-of-concept application that demonstrates real-time fraud detection using
 
 1. Clone the repository:
 ```sh
-git clone https://github.com/ntwolff/zenith-fraud-detection.git
+git clone https://github.com/ntwolff/zenith.git
 cd fraud-detection
 ```
 
 2. Build and start the services using Docker Compose:
 ```sh
-# docker-compose up --build -d
+# docker-compose up -d
 docker-compose up --build
 ```
 

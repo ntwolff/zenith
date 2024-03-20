@@ -28,7 +28,7 @@ def create_customer_event(event: CustomerEventModel):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.get("/application-event", summary="Create a new ApplicationEvent", response_model=None, status_code=201)
+@router.post("/application-event", summary="Create a new ApplicationEvent", response_model=None, status_code=201)
 def create_application_event(event: ApplicationEventModel):
     """
     Create a new application event.
