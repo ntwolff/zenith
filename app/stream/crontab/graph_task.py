@@ -1,5 +1,5 @@
-from app.faust.app import faust_app
-from app.faust.topic import graph_management_topic
+from app.stream.faust_app import faust_app
+from app.stream.topic import graph_management_topic
 from app.models import GraphTask, TaskEnum
 from datetime import datetime
 from uuid import uuid4

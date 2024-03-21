@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.models import CustomerEvent, CustomerEventModel, ApplicationEventModel, ApplicationEvent
 from app.database.neo4j_database import Neo4jDatabase
-from app.faust.topic import customer_event_topic, application_event_topic
+from app.stream.topic import customer_event_topic, application_event_topic
 
 router = APIRouter()
 graph_database = Neo4jDatabase()

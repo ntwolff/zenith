@@ -1,8 +1,6 @@
-# app/main.py
-from app.faust.app import faust_app
+# from app.stream.faust_app import faust_app
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from app.database.neo4j_database import Neo4jDatabase
 from app.api.router import router as api_router
 import asyncio
 

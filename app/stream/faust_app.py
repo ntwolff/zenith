@@ -8,7 +8,7 @@ app = faust_app = faust.App(
     broker=settings.faust_broker,
     web_enabled=False,
     autodiscover=True,
-    origin="app.faust",
+    origin="app.stream",
     topic_partitions=settings.kafka_topic_partitions,
     topic_replication_factor=settings.kafka_topic_replication_factor,
     topic_allow_declare=True,

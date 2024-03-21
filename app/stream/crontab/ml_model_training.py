@@ -1,4 +1,4 @@
-from app.faust.app import faust_app
+from app.stream.faust_app import faust_app
 from app.ml.model_training import project_and_train_model
 from app.config.settings import settings
 import logging

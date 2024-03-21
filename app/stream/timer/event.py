@@ -1,6 +1,6 @@
 from app.config.settings import settings
-from app.faust.app import app
-from app.faust.topic import customer_event_topic, application_event_topic
+from app.stream.faust_app import app
+from app.stream.topic import customer_event_topic, application_event_topic
 from app.models import CustomerEvent, ApplicationEvent, CustomerEventTypeEnum, ApplicationEventTypeEnum, Customer, Device, Address
 from app.models.application import Application, EmploymentStatusEnum, SourceEnum
 from app.models.ip_address import IpAddress

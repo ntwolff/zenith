@@ -1,5 +1,5 @@
-from app.faust.app import faust_app
-from app.faust.topic import graph_management_topic
+from app.stream.faust_app import faust_app
+from app.stream.topic import graph_management_topic
 from app.database.neo4j_database import Neo4jDatabase
 from app.models import TaskEnum
 from app.services import CustomerService

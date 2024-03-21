@@ -1,6 +1,6 @@
-from app.faust.app import faust_app
-from app.faust.topic import risk_signal_topic, customer_event_topic
-from app.faust.table import ip_velocity_table, login_velocity_table
+from app.stream.faust_app import faust_app
+from app.stream.topic import risk_signal_topic, customer_event_topic
+from app.stream.table import ip_velocity_table, login_velocity_table
 from app.models import CustomerEvent, RiskSignal, SignalEnum
 from uuid import uuid4
 import logging

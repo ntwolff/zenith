@@ -6,7 +6,9 @@ RUN apt-get update && apt-get install -y netcat-openbsd curl
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY setup.py .
+
+RUN pip install --no-cache-dir .
 
 COPY . .
 
@@ -17,4 +19,4 @@ RUN chmod +x wait-for-neo4j.sh
 COPY wait-for-kafka.sh .
 RUN chmod +x wait-for-kafka.sh
 
-CMD ["./wait-for-neo4j.sh", "neo4j", "--", "./wait-for-kafka.sh", "kafka", "--", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["./wait-for-neo4j.sh", "neo4j", "--", "./wait-for-kafka.sh", "kafka", "--", "uvicorn", "app.api.fast_app:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "debug"]
