@@ -39,7 +39,8 @@ docker system prune -a --volumes
 
 ## Usage
 
-- Kafka dashboard: `http://localhost:3030`
-- Kafka topics: `customer-event`, `application-event`, `risk-signal`, `graph-management`
-- API docs: `http://localhost:8000/docs`
+- Kafka 
+    - Dashboard: `http://localhost:3030`
+    - Topics: `customer-event`, `application-event`, `risk-signal`, `graph-management`
+- FastAPI: `http://localhost:8000/docs`
 - Tests: `pytest tests/`

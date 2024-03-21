@@ -16,7 +16,7 @@ services:
       - 3030:3030  # Lenses UI
       - 29092:29092  # Kafka Broker
     networks:
-      - fraud-detection
+      - zenith
 
   # local -> neo4j@neo4j://localhost:7687
   neo4j:
@@ -28,22 +28,21 @@ services:
       - "7474:7474"
       - "7687:7687"
     networks:
-      - fraud-detection
+      - zenith
 
-  #http://localhost:8000/docs
-  fraud-detection-api:
+  zenith-api:
     build:
       context: .
-      dockerfile: Dockerfile.fast-api
+      dockerfile: Dockerfile.fastapi
     ports:
       - "8000:8000"
     depends_on:
       - kafka
       - neo4j
     networks:
-      - fraud-detection
+      - zenith
 
-  fraud-detection-worker:
+  zenith-worker:
     build:
       context: .
       dockerfile: Dockerfile.faust-worker
@@ -51,8 +50,8 @@ services:
       - kafka
       - neo4j
     networks:
-      - fraud-detection
+      - zenith
 
 networks:
-  fraud-detection:
-    name: fraud-detection-network
+  zenith:
+    name: zenith

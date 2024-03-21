@@ -1,14 +1,26 @@
-# Zenith - Next Steps
+# Zenith Next Steps
+
+## Practical
 -----------------------
-- Integrate ip information api (ipinfo.io), and call ip api and address api (google maps implementation in app/services/address_service.py) during graph event processing to enrich data.
-- Create mocks for other api services (Threatmetrix, Transunion, etc.). 
-- Add an alert/investigation workflow to allow fraud specialists to review suspicious nodes in the graph and tag them with the findings.
-- Add a historical data upload mechanism, and a batch event upload mechanism in the API.
-- Expand the API endpoints to allow for the analysis of individual nodes (/api/customer/{id}/analyze, /api/application/{id}/analyze, etc.)
-- Complete the implementation of the machine learning model training and deployment pipeline, and real-time inference of nodes being added to the graph.
-- Utilize geospatial information in graph analysis (e.g. ip address latitude and longitude).
-- Enhance the data retention policies within Kafka and the graph (last 30, 60, 90 days?).
-- Expand the number of real-time risk signals on the stream.
-- Implement a key/value store database (rocksdb, redis) to persist information instead of storing in memory (e.g. Faust tables).
-- Implement a document database sink to push certain topics onto for further downstream data analysis (e.g. MongoDB).
-- Add policies for sensitive information obfuscation within the Kafka cluster.
+- Refactor to "v2" model pattern (i.e. base model/record and factory).
+- Integrate ip information api (ipinfo.io).
+- Create mocks for other data services (Threatmetrix, Transunion, etc.). 
+- Alerts and case management.
+- Bulk data upload of events.
+- Redesign API around investigations
+- Investigate geospatial applications of the graph data.
+- Graph data retention best practices investigation.
+- Expand real-time signaling use cases.
+- Kafka policies (e.g. PII obfuscation)
+
+## Exploratory
+-----------------------
+- Key/value store database (e.g. RocksDB), vector database (e.g. Pinecone), document database (e.g. MongoDB).
+- Synthetic data generation (e.g. Mostly.ai)
+- Proving efficacy on out-of-the-box Kaggle dataset
+- Neo4j alternatives (e.g. Memgraph (cypher), Aerospike (gremlin))
+    - Aerospike clients: Paypal, ThreatMetrix
+- XNetwork for graph algorithms
+- Administrative user experience (ideally w/ embedded graph visualizations)
+- Notebook environment (i.e. Jupyter Lab)
+- ML model real-time inference - GraphDataScience library?  or other methodology?
