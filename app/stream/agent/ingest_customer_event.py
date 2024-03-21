@@ -1,6 +1,6 @@
 from app.stream.faust_app import faust_app
 from app.stream.topic import customer_event_topic
-from app.processors.graph_event_processor import GraphEventProcessor
+from app.stream.utils.graph_event_processor import GraphEventProcessor
 from app.database.neo4j_database import Neo4jDatabase
 
 db = Neo4jDatabase()

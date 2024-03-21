@@ -1,12 +1,8 @@
 import faust
 from typing import Any, Type
-from pydantic import BaseModel, ConfigDict, GetCoreSchemaHandler, TypeAdapter
-from pydantic_core import CoreSchema, core_schema
-import abc
-from typing import Optional
-
-class ZenithBaseModel(BaseModel, abc.ABC):
-    model_config = ConfigDict(arbitrary_types_allowed = True)
+from pydantic import GetCoreSchemaHandler
+from pydantic_core import core_schema
+from app.models.foo.base_model import ZenithBaseModel
 
 class ZenithBaseRecord(faust.Record, abstract=True):
     this: ZenithBaseModel
@@ -25,18 +21,3 @@ class ZenithBaseRecord(faust.Record, abstract=True):
                 'this': core_schema.typed_dict_field(core_schema.model_ser_schema(source.this.type, schema)),
             },
         )
-
-class FooModel(ZenithBaseModel):
-    uid: str
-    name: str
-
-class FooRecord(ZenithBaseRecord, serializer='json_foos'):
-    this: FooModel
-
-# class BarModel(ZenithBaseModel):
-#     what: str
-#     the: str
-#     heck: str
-
-# class BarRecord(ZenithBaseRecord, serializer='json_foos'):
-#     this: BarModel

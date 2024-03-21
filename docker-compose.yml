@@ -31,8 +31,10 @@ services:
       - fraud-detection
 
   #http://localhost:8000/docs
-  fraud-detection:
-    build: .
+  fraud-detection-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.fast-api
     ports:
       - "8000:8000"
     depends_on:

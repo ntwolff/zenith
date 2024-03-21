@@ -42,7 +42,12 @@ setup(
             'zenith = app.stream.faust_app:main',
         ],
         'faust.codecs': [
-            'json_foos = app.stream.codecs.json:json_foo_codec',
+            'foo = app.stream.codec_registry:foo_codec',
+            'bar = app.stream.codec_registry:bar_codec',
         ],
+        # 'faust.codecs': [
+        #     f'{model_name} = app.stream.codec_registry:codecs["{model_name}"]'
+        #     for model_name in codecs.keys()
+        # ],
     },
 )
