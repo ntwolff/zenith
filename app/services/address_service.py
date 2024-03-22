@@ -1,5 +1,5 @@
-from .base_service import BaseService
-from app.models.address import Address
+from app.services.base_service import BaseService
+from app.models.v2.address import Address
 from googlemaps import Client
 from app.config.settings import settings
 import logging

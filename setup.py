@@ -41,17 +41,5 @@ setup(
         'console_scripts': [
             'zenith = app.stream.faust_app:main',
         ],
-        'faust.codecs': [
-            'foo = app.stream.codec_registry:foo_codec',
-            'bar = app.stream.codec_registry:bar_codec',
-            'customerevent = app.stream.codec_registry:customer_event_codec',
-            'applicationevent = app.stream.codec_registry:application_event_codec',
-            'risksignal = app.stream.codec_registry:risk_signal_codec',
-            'graphtask = app.stream.codec_registry:graph_task_codec',
-        ],
-        # 'faust.codecs': [
-        #     f'{model_name} = app.stream.codec_registry:codecs["{model_name}"]'
-        #     for model_name in codecs.keys()
-        # ],
     },
 )

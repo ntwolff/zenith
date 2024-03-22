@@ -1,4 +1,4 @@
-from app.models.event import Event, CustomerEvent, ApplicationEvent
+from app.models.v2 import Event, CustomerEventType, ApplicationEventType
 from app.services import RecordService, CustomerService, EventService, AddressService
 from app.database.database_interface import DatabaseInterface
 import logging
@@ -25,7 +25,7 @@ class GraphEventProcessor:
         self.r_service.upsert_record(ip_address)
         self.r_service.connect_records(event, ip_address, "HAS")
 
-        if isinstance(event, CustomerEvent) or isinstance(event, ApplicationEvent):
+        if (event.type in CustomerEventType) or (event.type in ApplicationEventType):
             #customer
             customer = event.customer
             customer.last_active_at = event.timestamp
@@ -45,7 +45,7 @@ class GraphEventProcessor:
             self.c_service.link_on_pii('phone', customer.phone)
             self.c_service.link_on_pii('ssn', customer.ssn)
         
-        if isinstance(event, ApplicationEvent):
+        if event.type in ApplicationEventType:
             #application
             application = event.application
             self.r_service.upsert_record(application)
@@ -55,4 +55,4 @@ class GraphEventProcessor:
             self.r_service.connect_records(application, device, "USED")
             self.r_service.connect_records(application, ip_address, "USED")
         
-        logging.info(f"Processed event: {event.event_id}")
+        logging.info(f"Processed event: {event.uid}")

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.models import CustomerEvent, CustomerEventModel, ApplicationEventModel, ApplicationEvent
 from app.database.neo4j_database import Neo4jDatabase
-from app.stream.topic import customer_event_topic, application_event_topic
+from app.stream.topic import event_topic
 
 router = APIRouter()
 graph_database = Neo4jDatabase()
@@ -23,7 +23,7 @@ def create_customer_event(event: CustomerEventModel):
     """
     try:
         faust_event = CustomerEvent.from_model(event)
-        customer_event_topic.send(value=faust_event)
+        event_topic.send(value=faust_event)
         return {"message": "Event pushed to topic"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -45,7 +45,7 @@ def create_application_event(event: ApplicationEventModel):
     """
     try:
         faust_event = ApplicationEvent.from_model(event)
-        application_event_topic.send(value=faust_event)
+        event_topic.send(value=faust_event)
         return {"message": "Event pushed to topic"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

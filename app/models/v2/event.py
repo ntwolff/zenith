@@ -1,28 +1,24 @@
-from app.models.v2.base import AbstractBaseModel
+import faust
+from app.models.v2.base import BaseEnum
 from app.models.v2.device import Device
 from app.models.v2.ip_address import IpAddress
 from app.models.v2.customer import Customer
 from app.models.v2.application import Application
 from enum import Enum
-from pydantic import Field
+from typing import Optional, Union
 
-class EventType(Enum):
+class CustomerEventType(BaseEnum):
     CUSTOMER_REGISTRATION = "customer_registration"
     CUSTOMER_LOGIN = "customer_login"
-    APP_SUBMISSION = "app_submission"
 
-class Event(AbstractBaseModel):
-    uid: str = Field(examples=["123e4567-e89b-12d3-a456-426614174000"])
-    type: EventType
+class ApplicationEventType(BaseEnum):
+    APPLICATION_SUBMISSION = "application_submission"
+
+class Event(faust.Record):
+    uid: str
+    type: str
     timestamp: int
-    device: Device
-    ip_address: IpAddress
-
-#@record
-class CustomerEvent(Event):
-    customer: Customer
-
-#@record
-class ApplicationEvent(Event):
-    customer: Customer
-    application: Application
+    device: Optional[Device] = None
+    ip_address: Optional[IpAddress] = None
+    customer: Optional[Customer] = None
+    application: Optional[Application] = None

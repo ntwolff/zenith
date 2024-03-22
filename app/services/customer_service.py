@@ -1,4 +1,4 @@
-from app.models import Customer, Address
+from app.models.v2 import Customer
 from .base_service import BaseService
 from datetime import datetime
 
@@ -9,7 +9,7 @@ class CustomerService(BaseService):
         label = customer.__class__.__name__
         super().upsert(label, "uid", customer.uid, properties)
 
-    def mark_as_risky(self, customer_id: str, reason: str):
+    def mark_as_risky(self, uid: str, reason: str):
         properties = {
             "risky": True,
             "risky_since": datetime.now(),
@@ -17,7 +17,7 @@ class CustomerService(BaseService):
         }
         label = "Customer"
 
-        super().upsert(label, "uid", customer_id, properties)
+        super().upsert(label, "uid", uid, properties)
 
     def link_on_pii(self, pii_type, pii_value):
         query = """

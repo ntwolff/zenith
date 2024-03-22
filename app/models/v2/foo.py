@@ -1,5 +1,5 @@
-from app.models.v2.base import AbstractBaseModel
+from pydantic import BaseModel
 
-class Foo(AbstractBaseModel):
+class Foo(BaseModel):
     uid: str
     name: str

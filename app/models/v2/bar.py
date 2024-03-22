@@ -1,6 +1,7 @@
-from app.models.v2.base import AbstractBaseModel
+import faust
+from pydantic import BaseModel
 
-class Bar(AbstractBaseModel):
+class Bar(BaseModel):
     uid: str
     name: str
     age: int

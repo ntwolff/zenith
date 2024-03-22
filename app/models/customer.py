@@ -7,7 +7,7 @@ from app.models.address import AddressModel, Address
 class CustomerModel(BaseModel):
     uid: str = Field(..., description="Unique identifier of the object")
     customer_id: str = Field(..., description="Customer ID")
-    email: str = Field(..., description="Email address")
+    email: str = Field(None, description="Email address")
     phone: Optional[str] = Field(None, pattern=r'^\+?1?\d{9,15}$', description="Phone number")
     first_name: Optional[str] = Field(None, min_length=1, max_length=255, description="First name")
     last_name: Optional[str] = Field(None, min_length=1, max_length=255, description="Last name")

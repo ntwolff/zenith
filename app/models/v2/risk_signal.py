@@ -1,7 +1,6 @@
-from app.models.v2.base import AbstractBaseModel
+import faust
 from app.models.v2.event import Event
 from enum import Enum
-from pydantic import Field
 
 class RiskSignalType(Enum):
     IP_VELOCITY = 'ip_velocity'
@@ -9,7 +8,7 @@ class RiskSignalType(Enum):
     APPLICATION_FRAUD = 'application_fraud'
 
 #@record
-class RiskSignal(AbstractBaseModel):
-    uid: str = Field(examples=["123e4567-e89b-12d3-a456-426614174000"])
+class RiskSignal(faust.Record):
+    uid: str
     type: RiskSignalType
     event: Event

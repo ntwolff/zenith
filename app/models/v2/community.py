@@ -1,7 +1,7 @@
-from app.models.v2.base import AbstractBaseModel
+import faust
 from typing import List
 
-class CommunityModel(AbstractBaseModel):
+class CommunityModel(faust.Record):
     community_id: int
     members: List[str]
     size: int

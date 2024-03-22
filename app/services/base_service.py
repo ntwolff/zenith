@@ -37,5 +37,5 @@ class BaseService(ABC):
         self.db.execute_query(query)
 
 
-    def connect_records(self, from_record: faust.Record, to_record: faust.Record, rel_type: str):
-        self.connect(from_record.__class__.__name__, "uid", from_record.uid, to_record.__class__.__name__, "uid", to_record.uid, rel_type)
+    def connect_records(self, from_model: faust.Record, to_model: faust.Record, rel_type: str):
+        self.connect(from_model.__class__.__name__, "uid", from_model.uid, to_model.__class__.__name__, "uid", to_model.uid, rel_type)
