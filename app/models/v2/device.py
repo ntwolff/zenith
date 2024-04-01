@@ -1,6 +1,6 @@
-import faust
+from pydantic import BaseModel
 
-class Device(faust.Record):
+class Device(BaseModel):
     uid: str
     device_id: str
     user_agent: str

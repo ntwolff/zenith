@@ -1,3 +1,4 @@
+import faust
 from enum import Enum, EnumMeta
 
 class MetaEnum(EnumMeta):
@@ -11,3 +12,6 @@ class MetaEnum(EnumMeta):
 
 class BaseEnum(Enum, metaclass=MetaEnum):
     pass
+
+class BaseRecord(faust.Record):
+    uid: str

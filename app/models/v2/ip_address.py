@@ -1,5 +1,5 @@
-import faust
+from pydantic import BaseModel
 
-class IpAddress(faust.Record):
+class IpAddress(BaseModel):
     uid: str
     ipv4: str

@@ -12,24 +12,24 @@ ip_address_service = IpAddressService(graph_database)
 @faust_app.agent(risk_signal_topic)
 async def handle_risk_signal(signals):
     async for signal in signals:
-        if signal.signal == RiskSignalType.LOGIN_VELOCITY.value:
+        if signal.type == RiskSignalType.LOGIN_VELOCITY:
             customer_service.mark_as_risky(
                 uid=signal.event.customer.uid, 
-                reason=RiskSignalType.LOGIN_VELOCITY)
+                reason=RiskSignalType.LOGIN_VELOCITY.value)
             
-            logging.info(f"Processed {RiskSignalType.LOGIN_VELOCITY} risk signal for customer: {signal.event.customer.uid}")    
+            logging.info(f"Processed {RiskSignalType.LOGIN_VELOCITY.value} risk signal for customer: {signal.event.customer.uid}")    
         
-        elif signal.signal == RiskSignalType.IP_VELOCITY.value:
+        elif signal.type == RiskSignalType.IP_VELOCITY:
             ip_address_service.mark_as_risky(
                 uid=signal.event.ip_address.uid, 
                 reason=RiskSignalType.IP_VELOCITY.value)
             
             logging.info(f"Processed {RiskSignalType.IP_VELOCITY.value} risk signal for ip address: {signal.event.ip_address.ipv4}") 
         
-        elif signal.signal == RiskSignalType.APPLICATION_FRAUD.value:
+        elif signal.type == RiskSignalType.APPLICATION_FRAUD:
             # @TODO: Implement.
 
             logging.info("Application fraud signal received.  Not yet implemented.") 
         
         else:
-            raise ValueError(f"Unknown signal type: {signal.signal}")
+            raise ValueError(f"Unknown signal type: {signal.type}")

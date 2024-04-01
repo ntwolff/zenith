@@ -1,11 +1,10 @@
-import faust
+from pydantic import BaseModel
 from app.models.v2.base import BaseEnum
 from app.models.v2.device import Device
 from app.models.v2.ip_address import IpAddress
 from app.models.v2.customer import Customer
 from app.models.v2.application import Application
-from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 
 class CustomerEventType(BaseEnum):
     CUSTOMER_REGISTRATION = "customer_registration"
@@ -14,11 +13,11 @@ class CustomerEventType(BaseEnum):
 class ApplicationEventType(BaseEnum):
     APPLICATION_SUBMISSION = "application_submission"
 
-class Event(faust.Record):
+class Event(BaseModel):
     uid: str
     type: str
     timestamp: int
-    device: Optional[Device] = None
-    ip_address: Optional[IpAddress] = None
-    customer: Optional[Customer] = None
+    device: Device
+    ip_address: IpAddress
+    customer: Customer
     application: Optional[Application] = None

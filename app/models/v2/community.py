@@ -1,7 +1,7 @@
-import faust
+from pydantic import BaseModel
 from typing import List
 
-class CommunityModel(faust.Record):
+class CommunityModel(BaseModel):
     community_id: int
     members: List[str]
     size: int

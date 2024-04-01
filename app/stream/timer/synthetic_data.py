@@ -14,7 +14,7 @@ customer_states = {}
 used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], []
 
 
-@app.timer(2.0)
+@app.timer(1.0)
 async def produce_fake_events() -> None:
     """Produce fake customer and application events."""
     if not settings.fake_data_generation_enabled:

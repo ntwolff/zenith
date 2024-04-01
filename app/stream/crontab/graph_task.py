@@ -12,6 +12,6 @@ central = pytz.timezone('US/Central')
 @faust_app.crontab('16 00 * * *', timezone=central, on_leader=True)
 async def link_customers_by_pii():
     logging.info('-- This should be run at 20:00 Central time --')
-    logging.info(f'Adding {TaskEnum.LINK_CUSTOMERS_BY_PII} task at: {datetime.now()}')
+    logging.info(f'Adding {TaskType.LINK_CUSTOMERS_BY_PII} task at: {datetime.now()}')
     task = GraphTask(uid=uuid4(), task=TaskType.LINK_CUSTOMERS_BY_PII, timestamp=int(datetime.now().timestamp()))
     await graph_management_topic.send(value=task)

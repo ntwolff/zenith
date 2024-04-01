@@ -4,7 +4,7 @@ from datetime import datetime
 
 class CustomerService(BaseService):
     def upsert_record(self, customer: Customer):
-        properties = customer.asdict()
+        properties = customer.dict()
         properties.pop("address")
         label = customer.__class__.__name__
         super().upsert(label, "uid", customer.uid, properties)

@@ -10,3 +10,4 @@ from app.models.v2.event import Event, CustomerEventType, ApplicationEventType
 from app.models.v2.risk_signal import RiskSignal, RiskSignalType
 from app.models.v2.admin import GraphTask, TaskType
 from app.models.v2.community import CommunityModel
+from app.models.v2.base import BaseRecord

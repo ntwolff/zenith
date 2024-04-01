@@ -1,9 +1,9 @@
-import faust
+from pydantic import BaseModel
 from app.models.v2.address import Address
 from typing import Optional
 from datetime import date
 
-class Customer(faust.Record):
+class Customer(BaseModel):
     uid: str
     email: Optional[str] = None
     phone: Optional[str]= None

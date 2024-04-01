@@ -1,4 +1,4 @@
-import faust
+from pydantic import BaseModel
 from typing import Optional
 from enum import Enum
 
@@ -17,8 +17,8 @@ class EmploymentType(str, Enum):
     RETIRED = "retired"
     OTHER = "other"
 
-class Application(faust.Record):
+class Application(BaseModel):
     uid: str 
-    source: SourceType
+    source: Optional[SourceType] = None
     income: Optional[float] = None
     employment_status: Optional[EmploymentType] = None

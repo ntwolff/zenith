@@ -28,7 +28,6 @@ class GraphEventProcessor:
         if (event.type in CustomerEventType) or (event.type in ApplicationEventType):
             #customer
             customer = event.customer
-            customer.last_active_at = event.timestamp
             self.c_service.upsert_record(customer)
             self.r_service.connect_records(customer, event, "PERFORMS")
             self.r_service.connect_records(customer, device, "USED")

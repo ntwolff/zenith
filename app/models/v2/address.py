@@ -1,7 +1,7 @@
-import faust
+from pydantic import BaseModel
 from typing import Optional
 
-class Address(faust.Record):
+class Address(BaseModel):
     uid: str
     street: str
     city: str
@@ -9,8 +9,8 @@ class Address(faust.Record):
     zip: str
     latitude: Optional[float] = None
     longitude: Optional[float] = None
-    _is_valid: Optional[bool] = False
-    _validation_id: Optional[str] = None
+    is_valid: Optional[bool] = False
+    validation_id: Optional[str] = None
 
     def address_string(cls):
         return f"{cls.street}, {cls.city}, {cls.state} {cls.zip}"

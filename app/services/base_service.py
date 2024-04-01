@@ -1,6 +1,6 @@
 from abc import ABC
 from app.database.database_interface import DatabaseInterface
-import faust
+import pydantic
 
 class BaseService(ABC):
     def __init__(self, database: DatabaseInterface):
@@ -24,8 +24,8 @@ class BaseService(ABC):
         self.db.execute_query(query)
 
 
-    def upsert_record(self, record: faust.Record):
-        self.upsert(record.__class__.__name__, "uid", record.uid, record.asdict())
+    def upsert_record(self, record: pydantic.BaseModel):
+        self.upsert(record.__class__.__name__, "uid", record.uid, record.dict())
 
 
     def connect(self, from_label:str, from_id_key:str, from_id_val:str, to_label: str, to_id_key: str, to_id_val: str, rel_type: str):
@@ -37,5 +37,5 @@ class BaseService(ABC):
         self.db.execute_query(query)
 
 
-    def connect_records(self, from_model: faust.Record, to_model: faust.Record, rel_type: str):
+    def connect_records(self, from_model: pydantic.BaseModel, to_model: pydantic.BaseModel, rel_type: str):
         self.connect(from_model.__class__.__name__, "uid", from_model.uid, to_model.__class__.__name__, "uid", to_model.uid, rel_type)
