@@ -1,11 +1,11 @@
-from fastapi import APIRouter, HTTPException
-from app.database.neo4j_database import Neo4jDatabase
-
 """
 Fraud related endpoints for yielding insights from the graph.
 
-@TODO: Migrate to graph data science library (https://neo4j.com/docs/graph-data-science-client/current/)
+@TODO: Migrate to graph data science library
 """
+
+from fastapi import APIRouter, HTTPException
+from app.database.neo4j_database import Neo4jDatabase
 
 # Initialize router and graph database
 router = APIRouter()
@@ -17,10 +17,11 @@ def get_page_rank(limit: int = 25):
     """
     ***Demonstrative of Neo4j Graph Data Science functionality***
 
-    Get the page rank scores of nodes in the graph.  
-    
-    This endpoint retrieves page rank scores of nodes in the graph using the Neo4j Graph Data Science library.
-    Considers nodes of types: Customer, Device, IpAddress, Address.
+    Get the page rank scores of nodes in the graph:
+    - Customer
+    - Device
+    - IpAddress
+    - Address
 
     Parameters:
     - **limit**: The maximum number of page rank scores to return (default: 25).
@@ -34,12 +35,13 @@ def get_page_rank(limit: int = 25):
     Raises:
     - HTTPException (status_code=500): If an error occurs while calculating centrality scores.
     """
-    query = get_page_rank_scores_query(limit)
-    
+    graph_name = "fraud_graph"
+    query = get_page_rank_scores_query(graph_name, limit)
+
     try:
         with graph_database.driver.session() as session:
-            session.run(drop_fraud_graph_query())
-            session.run(project_fraud_graph_query())
+            session.run(drop_fraud_graph_query(graph_name))
+            session.run(project_fraud_graph_query(graph_name))
 
             result = session.run(query)
             records = result.data()
@@ -48,37 +50,49 @@ def get_page_rank(limit: int = 25):
             
             return {"page_rank_scores": risk_scores}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-    
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}") from e
+
 
 # ----------------------------------------------
 # Helper functions
 # ----------------------------------------------
 
-def drop_fraud_graph_query(graph_name: str = "fraud-graph"):
+def drop_fraud_graph_query(graph_name: str):
+    """
+    Drop the fraud graph if it exists.
+    """
+
     return f"CALL gds.graph.drop('{graph_name}', false) YIELD graphName"
 
 
-def project_fraud_graph_query(graph_name: str = "fraud-graph"):
-    return """
-        CALL gds.graph.project('fraud-graph', ['Customer', 'Device', 'IpAddress', 'Address'], {
-            PERFORMS: {
+def project_fraud_graph_query(graph_name: str):
+    """
+    Create a fraud graph projection.
+    """
+
+    return f"""
+        CALL gds.graph.project('{graph_name}', ['Customer', 'Device', 'IpAddress', 'Address'], {{
+            PERFORMS: {{
                 orientation: 'UNDIRECTED'
-            },
-            USED: {
+            }},
+            USED: {{
                 orientation: 'UNDIRECTED'    
-            },
-            SHARES_PII: {
+            }},
+            SHARES_PII: {{
                 orientation: 'UNDIRECTED'
-            }
-        })
+            }}
+        }})
         YIELD graphName AS graph, nodeProjection AS nodes, relationshipProjection AS rels
     """
 
 
-def get_page_rank_scores_query(limit: int = 25):
+def get_page_rank_scores_query(graph_name: str, limit: int = 25):
+    """
+    Get the page rank scores of nodes in the graph.
+    """
+
     return f"""
-        CALL gds.pageRank.stream('fraud-graph')
+        CALL gds.pageRank.stream('{graph_name}')
         YIELD nodeId, score
 
         WITH gds.util.asNode(nodeId) AS node, score
