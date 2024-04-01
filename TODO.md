@@ -13,6 +13,7 @@
 - Expand real-time signaling use cases.
 - Kafka policies (e.g. PII obfuscation)
 - Standardize logging
+- Update API documentation with example data (https://fastapi.tiangolo.com/tutorial/schema-extra-example/)
 
 ## Exploratory
 -----------------------

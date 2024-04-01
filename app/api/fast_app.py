@@ -14,7 +14,7 @@ async def lifespan(app: FastAPI):
 # FastAPI
 app = fastapi_app = FastAPI(
     lifespan=lifespan,
-    title="Fraud Detection",
+    title="Zenith API",
     description="Detect fraudulent activity in near real-time.",
     version="0.0.1",
 )

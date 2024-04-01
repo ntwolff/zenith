@@ -2,6 +2,10 @@ from fastapi import APIRouter, HTTPException
 from app.models.v2 import Event, RiskSignal
 from app.stream.topic import event_topic, risk_signal_topic
 
+"""
+Administrative endpoints for pushing data to the stream.
+"""
+
 # Initialize router
 router = APIRouter()
 

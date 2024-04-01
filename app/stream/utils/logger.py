@@ -12,7 +12,10 @@ def log_timer_message(timer, topic, object, warning=None):
     else:
         _log_info_message("TIMER", timer, topic, object)
 
+
+# ----------------------------------------------
 # Helper functions
+# ----------------------------------------------
 
 def _log_info_message(actor_type, actor, topic, object):
     logging.info(f"""
@@ -22,6 +25,7 @@ def _log_info_message(actor_type, actor, topic, object):
     TYPE: {object.__class__.__name__} ({object.type})
     IDENTIFIER: {object.uid}
     ***""")
+
 
 def _log_warning_message(actor_type, actor, topic, object, warning):
     logging.warning(f"""
