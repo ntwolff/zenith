@@ -5,17 +5,33 @@ from app.models.v2 import Event, CustomerEventType, ApplicationEventType, Custom
 from faker import Faker
 import random
 import asyncio
+from app.stream.utils.logger import log_timer_message
+
+"""
+Synthentic data generation
+
+Features:
+- Creates fake data for customer and application events.
+- Creates customer registrations a portion of the time, otherwise re-uses existing customers for login and application submission events.
+- Randomly decides whether to create new values or re-use existing values to simulate fraud rings.
+- Sends the generated events to the event topic.
+
+@TODO: Move data generation into a utility class
+@TODO: Explore synthetic data generation tool (e.g. Mostly.ai)
+"""
 
 # Initialize Faker
 fake = Faker()
 
+
 # Dictionary to store customer states and reusable values
 customer_states = {}
-used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], []
+used_customers, used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], [], []
 
 
+# Faust timer running on a static interval (in seconds)
 @app.timer(1.0)
-async def produce_fake_events() -> None:
+async def generate_synthetic_data() -> None:
     """Produce fake customer and application events."""
     if not settings.fake_data_generation_enabled:
         return
@@ -52,85 +68,37 @@ async def produce_fake_events() -> None:
 
 
 async def send_event(topic, event: Event):    
+    """Send an event to the specified topic."""
     await topic.send(value=event)
-    
-    print(f"Produced {event.__class__.__name__} {event.type}: {event.uid}")
+    log_timer_message("generate_synthetic_data", topic, event)
 
 
 async def generate_fake_customer_registration() -> Event:
     """Generate a fake customer registration event."""
-    address = get_or_create_value(used_addresses, lambda: Address(
-        uid=str(fake.uuid4()),
-        street=fake.street_address(),
-        city=fake.city(),
-        state=fake.state_abbr(),
-        zip=fake.zipcode(),
-    ))
-
-    customer = Customer(
-        uid=str(fake.uuid4()),
-        email=get_or_create_value(used_emails, fake.email),
-        phone=get_or_create_value(used_phones, fake.phone_number),
-        first_name=fake.first_name(),
-        last_name=fake.last_name(),
-        date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=80),
-        ssn=fake.ssn(),
-        address=address,
-    )
-
-    device = get_or_create_value(used_devices, lambda: Device(
-        uid=str(fake.uuid4()),
-        device_id=str(fake.uuid4()),
-        user_agent=fake.user_agent(),
-    ))
-
-    ip_address = get_or_create_value(used_ips, lambda: IpAddress(
-        uid=str(fake.uuid4()),
-        ipv4=fake.ipv4(),
-    ))
-
     return Event(
         uid=str(fake.uuid4()),
         type=CustomerEventType.CUSTOMER_REGISTRATION.value,
         timestamp=int(asyncio.get_running_loop().time()),
-        customer=customer,
-        device=device,
-        ip_address=ip_address,
+        customer=create_customer(),
+        device=get_or_create_device(),
+        ip_address=get_or_create_ip_address(),
     )
 
 
 async def generate_fake_customer_login(customer_uid: str) -> Event:
     """Generate a fake customer login event."""
-    device = get_or_create_value(used_devices, lambda: Device(
-        uid=str(fake.uuid4()),
-        device_id=str(fake.uuid4()),
-        user_agent=fake.user_agent(),
-    ))
-    ip_address = get_or_create_value(used_ips, lambda: IpAddress(
-        uid=str(fake.uuid4()),
-        ipv4=fake.ipv4(),
-    ))
     return Event(
         uid=str(fake.uuid4()),
         type=CustomerEventType.CUSTOMER_LOGIN.value,
         timestamp=int(asyncio.get_running_loop().time()),
         customer=Customer(uid=customer_uid),
-        device=device,
-        ip_address=ip_address,
+        device=get_or_create_device(),
+        ip_address=get_or_create_ip_address(),
     )
 
 
 async def generate_fake_application_event(customer_uid: str) -> Event:
-    """Generate a fake application event."""
-    device = get_or_create_value(used_devices, lambda: Device(
-        uid=str(fake.uuid4()),
-        device_id=str(fake.uuid4()),
-        user_agent=fake.user_agent(),
-    ))
-    ip_address = get_or_create_value(used_ips, lambda: IpAddress(
-        uid=str(fake.uuid4()),
-        ipv4=fake.ipv4(),
-    ))
+    """Generate a fake application submission event."""
     return Event(
         uid=str(fake.uuid4()),
         type=ApplicationEventType.APPLICATION_SUBMISSION.value,
@@ -142,10 +110,12 @@ async def generate_fake_application_event(customer_uid: str) -> Event:
             income=fake.random_int(min=10000, max=200000),
             employment_status=fake.random_element(list(EmploymentType)),
         ),
-        device=device,
-        ip_address=ip_address,
+        device=get_or_create_device(),
+        ip_address=get_or_create_ip_address(),
     )
 
+
+# Utility functions to get or create reusable values
 
 def get_or_create_value(collection, create_func):
     if collection and random.random() < 0.2:
@@ -154,3 +124,49 @@ def get_or_create_value(collection, create_func):
         value = create_func() if callable(create_func) else create_func
         collection.append(value)
         return value
+
+
+def get_or_create_device():
+    return get_or_create_value(used_devices, lambda: Device(
+        uid=str(fake.uuid4()),
+        device_id=str(fake.uuid4()),
+        user_agent=fake.user_agent(),
+    ))
+
+
+def get_or_create_ip_address():
+    return get_or_create_value(used_ips, lambda: IpAddress(
+        uid=str(fake.uuid4()),
+        ipv4=fake.ipv4(),
+    ))
+
+
+def get_or_create_email():
+    return get_or_create_value(used_emails, fake.email)
+
+
+def get_or_create_phone():
+    return get_or_create_value(used_phones, fake.phone_number)
+
+
+def get_or_create_address():
+    return get_or_create_value(used_addresses, lambda: Address(
+        uid=str(fake.uuid4()),
+        street=fake.street_address(),
+        city=fake.city(),
+        state=fake.state_abbr(),
+        zip=fake.zipcode(),
+    ))
+
+
+def create_customer():
+    return Customer(
+        uid=str(fake.uuid4()),
+        email=get_or_create_email(),
+        phone=get_or_create_phone(),
+        first_name=fake.first_name(),
+        last_name=fake.last_name(),
+        date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=80),
+        ssn=fake.ssn(),
+        address = get_or_create_address()
+    )

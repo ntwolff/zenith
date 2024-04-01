@@ -1,8 +1,8 @@
 from pydantic import BaseModel
+from app.models.v2.base import BaseEnum
 from typing import Optional
-from enum import Enum
 
-class SourceType(str, Enum):
+class SourceType(BaseEnum):
     CREDITKARMA = "creditkarma"
     LENDINGTREE = "lendingtree"
     EXPERIAN = "experian"
@@ -10,7 +10,7 @@ class SourceType(str, Enum):
     ORGANIC = "organic"
     OTHER = "other"
 
-class EmploymentType(str, Enum):
+class EmploymentType(BaseEnum):
     EMPLOYED = "employed"
     UNEMPLOYED = "unemployed"
     STUDENT = "student"

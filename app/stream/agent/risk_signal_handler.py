@@ -3,33 +3,30 @@ from app.stream.topic import risk_signal_topic
 from app.database.neo4j_database import Neo4jDatabase
 from app.models.v2 import RiskSignalType
 from app.services import CustomerService, IpAddressService
-import logging
+from app.stream.utils.logger import log_agent_message
 
 graph_database = Neo4jDatabase()
 customer_service = CustomerService(graph_database)
 ip_address_service = IpAddressService(graph_database)
 
 @faust_app.agent(risk_signal_topic)
-async def handle_risk_signal(signals):
+async def risk_signal_handler(signals):
     async for signal in signals:
         if signal.type == RiskSignalType.LOGIN_VELOCITY:
             customer_service.mark_as_risky(
                 uid=signal.event.customer.uid, 
-                reason=RiskSignalType.LOGIN_VELOCITY.value)
-            
-            logging.info(f"Processed {RiskSignalType.LOGIN_VELOCITY.value} risk signal for customer: {signal.event.customer.uid}")    
+                reason=RiskSignalType.LOGIN_VELOCITY.value) 
+            log_agent_message("risk_signal_handler", risk_signal_topic, signal)
         
         elif signal.type == RiskSignalType.IP_VELOCITY:
             ip_address_service.mark_as_risky(
                 uid=signal.event.ip_address.uid, 
                 reason=RiskSignalType.IP_VELOCITY.value)
-            
-            logging.info(f"Processed {RiskSignalType.IP_VELOCITY.value} risk signal for ip address: {signal.event.ip_address.ipv4}") 
+            log_agent_message("risk_signal_handler", risk_signal_topic, signal)
         
         elif signal.type == RiskSignalType.APPLICATION_FRAUD:
             # @TODO: Implement.
-
-            logging.info("Application fraud signal received.  Not yet implemented.") 
+            log_agent_message("risk_signal_handler", risk_signal_topic, signal, warning="Not implemented")
         
         else:
             raise ValueError(f"Unknown signal type: {signal.type}")

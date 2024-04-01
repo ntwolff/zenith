@@ -1,7 +1,6 @@
 from app.models.v2 import Event, CustomerEventType, ApplicationEventType
 from app.services import RecordService, CustomerService, EventService, AddressService
 from app.database.database_interface import DatabaseInterface
-import logging
 
 class GraphEventProcessor:
     def __init__(self, db: DatabaseInterface):
@@ -53,5 +52,3 @@ class GraphEventProcessor:
             self.r_service.connect_records(application, event, "PERFORMS")
             self.r_service.connect_records(application, device, "USED")
             self.r_service.connect_records(application, ip_address, "USED")
-        
-        logging.info(f"Processed event: {event.uid}")

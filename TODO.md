@@ -2,7 +2,7 @@
 
 ## Practical
 -----------------------
-- Refactor to "v2" model pattern (i.e. base model/record and factory).
+- Integrate schema registry via Pydantic -> JSON schema
 - Integrate ip information api (ipinfo.io).
 - Create mocks for other data services (Threatmetrix, Transunion, etc.). 
 - Alerts and case management.
@@ -12,6 +12,7 @@
 - Graph data retention best practices investigation.
 - Expand real-time signaling use cases.
 - Kafka policies (e.g. PII obfuscation)
+- Standardize logging
 
 ## Exploratory
 -----------------------

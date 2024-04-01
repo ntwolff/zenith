@@ -1,10 +1,10 @@
 from pydantic import BaseModel
-from enum import Enum
+from app.models.v2.base import BaseEnum
 
-class TaskType(str, Enum):
+class AdminTaskType(BaseEnum):
     LINK_CUSTOMERS_BY_PII = 'link_customers_by_pii'
 
-class GraphTask(BaseModel):
+class AdminTask(BaseModel):
     uid: str
-    task: TaskType
+    type: AdminTaskType
     timestamp: int
