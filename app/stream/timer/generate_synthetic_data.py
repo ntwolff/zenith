@@ -134,7 +134,7 @@ def get_or_create_value(collection, create_func):
     else:
         value = create_func() if callable(create_func) else create_func
         collection.append(value)
-    
+
     return value
 
 

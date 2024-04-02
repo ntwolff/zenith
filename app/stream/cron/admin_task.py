@@ -20,7 +20,7 @@ async def link_customers_by_pii():
     logging.info('-- Job scheduled for: 16:00 Central time --')
     logging.info(f'Adding {AdminTaskType.LINK_CUSTOMERS_BY_PII.value} task at: {datetime.now()}')
     task = AdminTask(
-        uid=uuid4(), 
-        task=AdminTaskType.LINK_CUSTOMERS_BY_PII, 
+        uid=uuid4(),
+        task=AdminTaskType.LINK_CUSTOMERS_BY_PII,
         timestamp=int(datetime.now().timestamp()))
     await admin_task_topic.send(value=task)

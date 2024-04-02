@@ -22,7 +22,7 @@ async def risk_signal_handler(signals):
                 reason=RiskSignalType.LOGIN_VELOCITY.value)
             agent_logger(
                 "risk_signal_handler", 
-                risk_signal_topic, 
+                risk_signal_topic,
                 signal)
 
         elif signal.type == RiskSignalType.IP_VELOCITY:
@@ -31,15 +31,15 @@ async def risk_signal_handler(signals):
                 reason=RiskSignalType.IP_VELOCITY.value)
             agent_logger(
                 "risk_signal_handler", 
-                risk_signal_topic, 
+                risk_signal_topic,
                 signal)
 
         elif signal.type == RiskSignalType.APPLICATION_FRAUD:
             # @TODO: Implement.
             agent_logger(
                 "risk_signal_handler", 
-                risk_signal_topic, 
-                signal, 
+                risk_signal_topic,
+                signal,
                 warning="Not implemented")
 
         else:

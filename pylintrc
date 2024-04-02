@@ -3,4 +3,6 @@ disable=
     too-few-public-methods,
     missing-class-docstring,
     missing-function-docstring,
-    logging-fstring-interpolation
+    logging-fstring-interpolation,
+    too-many-arguments,
+    consider-using-f-string
