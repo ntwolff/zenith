@@ -7,9 +7,6 @@ from pydantic import BaseModel, Field
 from app.models.v2.address import Address
 
 class Customer(BaseModel):
-    """
-    Zenith Customer Model
-    """
     uid: str
     email: Optional[str] = None
     phone: Optional[str] = None

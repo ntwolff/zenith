@@ -21,9 +21,6 @@ class EmploymentType(BaseEnum):
     OTHER = "other"
 
 class Application(BaseModel):
-    """
-    Zenith Application Model
-    """
     uid: str
     source: Optional[SourceType] = None
     income: Optional[float] = None

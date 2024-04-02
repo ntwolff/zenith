@@ -2,7 +2,8 @@
 Event models
 """
 from typing import Union, Optional
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict
+import faust
 from app.models.v2.base import BaseEnum
 from app.models.v2.user import Device, IpAddress
 from app.models.v2.customer import Customer
@@ -16,15 +17,6 @@ class ApplicationEventType(BaseEnum):
     APPLICATION_SUBMISSION = 'application_submission'
 
 class Event(BaseModel):
-    """
-    Zenith Event Model
-    """
-    model_config = ConfigDict(
-        title='Event', 
-        extra='allow', 
-        use_enum_values=True, 
-        arbitrary_types_allowed=True)
-
     uid: str
     event_type: Union[CustomerEventType, ApplicationEventType, None]
     timestamp: int
