@@ -1,7 +1,6 @@
 """
-Abstract database interfaces
+Abstract DB Interfaces
 """
-
 from abc import ABC, abstractmethod
 
 class GraphDatabaseInterface(ABC):

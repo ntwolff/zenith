@@ -1,11 +1,10 @@
 """
 Address Service
 """
-
 import logging
 from googlemaps import Client
-from app.services.base_service import BaseService
-from app.models.v2.address import Address
+from app.services._base import BaseService
+from app.models.address import Address
 from app.config.settings import settings
 
 class AddressService(BaseService):
@@ -64,9 +63,10 @@ class AddressService(BaseService):
 
     def is_valid_address(self, gmaps_result) -> bool:
         """
-        Google Maps response validation logic
+        Google Maps Response Validation Logic
+        *************************************
+        @TODO: Corner Cases
         """
-
         verdict = gmaps_result['result']['verdict']
         is_valid = None
 

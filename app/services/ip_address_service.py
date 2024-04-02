@@ -1,9 +1,9 @@
 """
-Ip Address Service
+IP Address Service
 """
 
 from datetime import datetime
-from .base_service import BaseService
+from ._base import BaseService
 
 class IpAddressService(BaseService):
     def mark_as_risky(self, uid: str, reason: str):

@@ -1,16 +1,14 @@
 """
-Fraud API endpoints
-
-***
-
-@TODO: 
-- Migrate to GDS Python library
+FastAPI Fraud Endpoints
+*************************
+@TODO: Migrate to GDS Python library
+@TODO: Integrate NetworkX
 """
 
 from fastapi import APIRouter, HTTPException
 from app.database.neo4j_database import Neo4jDatabase
 
-# Initialize router and graph database
+# Initialize FastAPI Router / Graph DB
 router = APIRouter()
 graph_database = Neo4jDatabase()
 

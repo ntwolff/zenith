@@ -1,5 +1,5 @@
 """
-Neo4j graph database
+Neo4j Graph DB
 """
 
 from neo4j import GraphDatabase

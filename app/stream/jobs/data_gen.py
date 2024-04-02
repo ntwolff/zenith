@@ -1,42 +1,30 @@
 """
 Synthentic Data Generation
-
-***
-
-Features:
-- Fake event data
-- Random re-use of data
-- Sends to Event topic
-
-@TODO: 
-- Move data generation to a util class
 """
-
 import random
 import asyncio
 from faker import Faker
 from app.config.settings import settings
 from app.stream.faust_app import app
-from app.stream.topic import event_topic
-from app.models.v2.event import Event, CustomerEventType, ApplicationEventType
-from app.models.v2.customer import Customer
-from app.models.v2.user import Device, IpAddress
-from app.models.v2.address import Address
-from app.models.v2.application import Application, EmploymentType, SourceType
-from app.stream.util.loggers import timer_logger
+from app.stream.topics import event_topic
+from app.models.event import Event, CustomerEventType, ApplicationEventType
+from app.models.customer import Customer
+from app.models.user import Device, IpAddress
+from app.models.address import Address
+from app.models.application import Application, EmploymentType, SourceType
+from app.stream.utils.loggers import timer_logger
 
 # Initialize Faker
 fake = Faker()
 
 
-# Dictionary to store customer states and reusable values
+# Scenario State Management
 customer_states = {}
 used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], []
 
 
-# Faust timer running on a static interval (in seconds)
-@app.timer(1.0)
-async def generate_synthetic_data() -> None:
+@app.timer(1.0) # 1s Interval
+async def spawn_event_data() -> None:
     """Produce fake customer and application events."""
     if not settings.fake_data_generation_enabled:
         return

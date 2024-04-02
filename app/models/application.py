@@ -2,8 +2,8 @@
 Application models
 """
 from typing import Optional
-from pydantic import BaseModel, Field
-from app.models.v2.base import BaseEnum
+from pydantic import BaseModel
+from app.models._base import BaseEnum
 
 class SourceType(BaseEnum):
     CREDITKARMA = "creditkarma"

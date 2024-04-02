@@ -2,8 +2,8 @@
 Event Service
 """
 
-from app.services.base_service import BaseService
-from app.models.v2 import Event
+from app.services._base import BaseService
+from app.models import Event
 
 class EventService(BaseService):
     def create_record(self, event: Event):

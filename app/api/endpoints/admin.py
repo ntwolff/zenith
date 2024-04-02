@@ -1,14 +1,13 @@
 """
-Administrative API endpoints
+FastAPI Admin Endpoints
 """
 
 from fastapi import APIRouter, HTTPException
-from app.models.v2 import Event, RiskSignal
-from app.stream.topic import event_topic, risk_signal_topic
+from app.models import Event, RiskSignal
+from app.stream.topics import event_topic, risk_signal_topic
 
-# Initialize router
+# Initialize FastAPI Router
 router = APIRouter()
-
 
 @router.post("/event", summary="Create a new event", response_model=None, status_code=201)
 def create_event(event: Event):

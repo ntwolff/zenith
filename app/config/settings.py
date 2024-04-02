@@ -6,33 +6,39 @@ import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    # General app settings
+    # Feature Flags
     fake_data_generation_enabled: bool = os.environ.get(
         'FAKE_DATA_GENERATION_ENABLED', 
         'false').lower() == 'true'
-    ml_detection_enabled: bool = os.environ.get('ML_DETECTION_ENABLED', 'false').lower() == 'true'
+    ml_detection_enabled: bool = os.environ.get(
+        'ML_DETECTION_ENABLED', 
+        'false').lower() == 'true'
 
-    # Kafka settings
-    kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))
-    kafka_topic_replication_factor: int = int(os.environ.get('KAFKA_TOPIC_REPLICATION_FACTOR', '1'))
+    # Kafka
+    kafka_topic_partitions: int = int(os.environ.get(
+        'KAFKA_TOPIC_PARTITIONS', 
+        '4'))
+    kafka_topic_replication_factor: int = int(os.environ.get(
+        'KAFKA_TOPIC_REPLICATION_FACTOR', 
+        '1'))
     kafka_schema_registry_url: str = os.environ.get(
         'KAFKA_SCHEMA_REGISTRY_URL', 
         'http://kafka:8081')
 
-    # Neo4j settings
+    # Neo4j
     neo4j_uri: str = os.environ.get('NEO4J_URI', 'bolt://localhost:7687')
     neo4j_user: str = os.environ.get('NEO4J_USER', 'neo4j')
     neo4j_password: str = os.environ.get('NEO4J_PASSWORD', 'password')
 
-    # FastAPI settings
+    # FastAPI
     fastapi_host: str = os.environ.get('FASTAPI_HOST', '0.0.0.0')
     fastapi_port: int = int(os.environ.get('FASTAPI_PORT', '8000'))
 
-    # Faust settings
+    # Faust - App
     faust_app_name: str = os.environ.get('FAUST_APP_NAME', 'fraud-detection-system')
     faust_broker: str = os.environ.get('FAUST_BROKER', 'kafka://kafka:9092')
 
-    # Processor settings
+    # Faust - Tables
     high_velocity_ip_window_size: int = int(
         os.environ.get(
             'HIGH_VELOCITY_IP_WINDOW_SIZE', 
@@ -50,7 +56,7 @@ class Settings(BaseSettings):
             'HIGH_VELOCITY_LOGIN_WINDOW_EXPIRES', 
             '60'))
 
-    # Google Maps settings
+    # Google Maps
     google_maps_api_key: str = os.environ.get('GOOGLE_MAPS_API_KEY', '')
     google_maps_enabled: bool = os.environ.get('GOOGLE_MAPS_ENABLED', 'false').lower() == 'true'
 

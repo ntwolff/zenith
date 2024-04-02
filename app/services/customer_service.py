@@ -3,8 +3,8 @@ Customer Service
 """
 
 from datetime import datetime
-from app.models.v2 import Customer
-from .base_service import BaseService
+from app.models import Customer
+from ._base import BaseService
 
 class CustomerService(BaseService):
     def upsert_record(self, record: Customer):

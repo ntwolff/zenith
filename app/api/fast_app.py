@@ -1,5 +1,5 @@
 """
-FastAPI App
+FastAPI Application
 """
 
 # from app.stream.faust_app import faust_app
@@ -12,9 +12,9 @@ async def lifespan(fastapi_app: FastAPI): # pylint: disable=unused-argument
     """
     FastAPI context manager
     """
-    #@TODO: pre start-up tasks
+    #@TODO: Pre Start-up Tasks
     yield
-    #@TODO: pre shut-down tasks
+    #@TODO: Pre Shut-down Tasks
 
 app = FastAPI(
     lifespan=lifespan,

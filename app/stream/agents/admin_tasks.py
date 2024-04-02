@@ -1,16 +1,25 @@
 """
-Administrative Task Handler Agents
+Faust Agents - Administrative Tasks
 """
 
 from app.stream.faust_app import faust_app
-from app.stream.topic import admin_task_topic
+from app.stream.topics import admin_task_topic
 from app.database.neo4j_database import Neo4jDatabase
-from app.models.v2 import AdminTaskType
+from app.models import AdminTaskType
 from app.services import CustomerService
-from app.stream.util.loggers import agent_logger
+from app.stream.utils.loggers import agent_logger
+
+# ----------------------
+# Db Initialization
+# ----------------------
 
 graph_database = Neo4jDatabase()
 customer_service = CustomerService(graph_database)
+
+
+# ----------------------
+# Agent Definitions
+# ----------------------
 
 @faust_app.agent(admin_task_topic)
 async def admin_task_handler(tasks):

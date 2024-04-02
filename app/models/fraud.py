@@ -2,8 +2,8 @@
 Fraud models
 """
 from pydantic import BaseModel, Field
-from app.models.v2.event import Event
-from app.models.v2.base import BaseEnum
+from app.models.event import Event
+from app.models._base import BaseEnum
 
 class RiskSignalType(BaseEnum):
     IP_VELOCITY = 'ip_velocity'

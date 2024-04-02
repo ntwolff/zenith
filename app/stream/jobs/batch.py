@@ -1,5 +1,5 @@
 """
-Administration Task Cron Jobs
+Batch Jobs (Cron)
 """
 
 from datetime import datetime
@@ -7,8 +7,8 @@ from uuid import uuid4
 import logging
 import pytz
 from app.stream.faust_app import faust_app
-from app.stream.topic import admin_task_topic
-from app.models.v2.admin import AdminTask, AdminTaskType
+from app.stream.topics import admin_task_topic
+from app.models.admin import AdminTask, AdminTaskType
 
 
 central = pytz.timezone('US/Central')

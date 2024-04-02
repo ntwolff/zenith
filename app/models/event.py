@@ -2,12 +2,11 @@
 Event models
 """
 from typing import Union, Optional
-from pydantic import BaseModel, ConfigDict
-import faust
-from app.models.v2.base import BaseEnum
-from app.models.v2.user import Device, IpAddress
-from app.models.v2.customer import Customer
-from app.models.v2.application import Application
+from pydantic import BaseModel
+from app.models._base import BaseEnum
+from app.models.user import Device, IpAddress
+from app.models.customer import Customer
+from app.models.application import Application
 
 class CustomerEventType(BaseEnum):
     CUSTOMER_REGISTRATION = 'customer_registration'

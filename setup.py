@@ -46,9 +46,9 @@ setup(
             'zenith = app.stream.faust_app:main',
         ],
         'faust.codecs': [
-            'event_serializer = app.stream.codec.event:EventSerializer',
-            'admin_task_serializer = app.stream.codec.admin_task:AdminTaskSerializer',
-            'risk_signal_serializer = app.stream.codec.risk_signal:RiskSignalSerializer',
+            'json_events = app.stream.codecs:event_codec',
+            'json_admin_tasks = app.stream.codecs:admin_task_codec',
+            'json_risk_signals = app.stream.codecs:risk_signal_codec',
         ],
     },
 )

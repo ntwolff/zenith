@@ -1,14 +1,34 @@
 """
-Velocity Risk Detection Agents
+Faust Agents - Customer/Application Events
 """
-
 from uuid import uuid4
 from app.stream.faust_app import faust_app
-from app.stream.topic import risk_signal_topic, event_topic
-from app.stream.table import ip_velocity_table, login_velocity_table
-from app.models.v2.fraud import RiskSignal, RiskSignalType
-from app.models.v2.event import Event, CustomerEventType
-from app.stream.util.loggers import agent_logger
+from app.stream.topics import risk_signal_topic, event_topic
+from app.stream.tables import ip_velocity_table, login_velocity_table
+from app.models.fraud import RiskSignal, RiskSignalType
+from app.models.event import Event, CustomerEventType
+from app.database.neo4j_database import Neo4jDatabase
+from app.stream.utils.loggers import agent_logger
+from app.stream.utils.processors import GraphEventProcessor
+
+
+# ----------------------
+# Db Initialization
+# ----------------------
+
+db = Neo4jDatabase()
+processor = GraphEventProcessor(db=Neo4jDatabase())
+
+
+# ----------------------
+# Agent Definitions
+# ----------------------
+
+@faust_app.agent(event_topic)
+async def event_ingestion(events):
+    async for event in events:
+        processor.process_event(event)
+        agent_logger("event_ingestion", event_topic, event)
 
 
 @faust_app.agent(event_topic)
@@ -40,6 +60,10 @@ async def login_velocity_detection(events):
             await risk_signal_topic.send(value=payload)
             agent_logger('login_velocity_detection', event_topic, event)
 
+
+# ----------------------
+# Helper Functions
+# ----------------------
 
 async def get_event_ip_address(event:Event) -> str:
     return event.ip_address.ipv4

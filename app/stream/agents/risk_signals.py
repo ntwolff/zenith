@@ -1,17 +1,25 @@
 """
-Risk Signal Handler Agents
+Faust Agents - Risk Signals
 """
 
 from app.stream.faust_app import faust_app
-from app.stream.topic import risk_signal_topic
+from app.stream.topics import risk_signal_topic
 from app.database.neo4j_database import Neo4jDatabase
-from app.models.v2 import RiskSignalType
+from app.models import RiskSignalType
 from app.services import CustomerService, IpAddressService
-from app.stream.util.loggers import agent_logger
+from app.stream.utils.loggers import agent_logger
+
+# ----------------------
+# Db Initialization
+# ----------------------
 
 graph_database = Neo4jDatabase()
 customer_service = CustomerService(graph_database)
 ip_address_service = IpAddressService(graph_database)
+
+# ----------------------
+# Agent Definitions
+# ----------------------
 
 @faust_app.agent(risk_signal_topic)
 async def risk_signal_handler(signals):

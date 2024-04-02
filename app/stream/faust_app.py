@@ -1,5 +1,5 @@
 """
-Faust App
+Faust Application
 """
 
 import faust
