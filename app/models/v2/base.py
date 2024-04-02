@@ -22,5 +22,4 @@ class BaseEnum(Enum, metaclass=MetaEnum):
     Usage:
     - Ex. `if ("type" in ExampleEnum)`
     """
-    
     pass

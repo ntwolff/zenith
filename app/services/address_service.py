@@ -74,12 +74,12 @@ class AddressService(BaseService):
             is_valid = False
         elif verdict['addressComplete'] and (
             'hasUnconfirmedComponents' in verdict
-            or 'hasInferredComponents' in verdict 
+            or 'hasInferredComponents' in verdict
             or 'hasReplacedComponents' in verdict):
             is_valid = True  # @TODO: Additional confirmation
         elif verdict['addressComplete'] and verdict['validationGranularity'] == 'APPROXIMATE':
             is_valid = True
         else:
             is_valid = False  # Unknown scenario
-        
+
         return is_valid

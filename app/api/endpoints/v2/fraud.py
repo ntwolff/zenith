@@ -79,7 +79,7 @@ def project_fraud_graph_query(graph_name: str):
                 orientation: 'UNDIRECTED'
             }},
             USED: {{
-                orientation: 'UNDIRECTED'    
+                orientation: 'UNDIRECTED'
             }},
             SHARES_PII: {{
                 orientation: 'UNDIRECTED'

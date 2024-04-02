@@ -16,5 +16,5 @@ class Address(BaseModel):
     is_valid: Optional[bool] = False
     validation_id: Optional[str] = None
 
-    def address_string(cls):
-        return f"{cls.street}, {cls.city}, {cls.state} {cls.zip}"
+    def address_string(self):
+        return f"{self.street}, {self.city}, {self.state} {self.zip}"

@@ -26,4 +26,3 @@ class Application(BaseModel):
     source: Optional[SourceType] = None
     income: Optional[float] = None
     employment_status: Optional[EmploymentType] = None
-
