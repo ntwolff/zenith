@@ -1,3 +1,7 @@
+"""
+Administrative models
+"""
+
 from pydantic import BaseModel
 from app.models.v2.base import BaseEnum
 

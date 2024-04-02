@@ -1,15 +1,23 @@
+"""
+Settings
+"""
+
 import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    # Application settings
-    fake_data_generation_enabled: bool = os.environ.get('FAKE_DATA_GENERATION_ENABLED', 'false').lower() == 'true'
+    # General app settings
+    fake_data_generation_enabled: bool = os.environ.get(
+        'FAKE_DATA_GENERATION_ENABLED', 
+        'false').lower() == 'true'
     ml_detection_enabled: bool = os.environ.get('ML_DETECTION_ENABLED', 'false').lower() == 'true'
 
     # Kafka settings
     kafka_topic_partitions: int = int(os.environ.get('KAFKA_TOPIC_PARTITIONS', '4'))
     kafka_topic_replication_factor: int = int(os.environ.get('KAFKA_TOPIC_REPLICATION_FACTOR', '1'))
-    kafka_schema_registry_url: str = os.environ.get('KAFKA_SCHEMA_REGISTRY_URL', 'http://kafka:8081')
+    kafka_schema_registry_url: str = os.environ.get(
+        'KAFKA_SCHEMA_REGISTRY_URL', 
+        'http://kafka:8081')
 
     # Neo4j settings
     neo4j_uri: str = os.environ.get('NEO4J_URI', 'bolt://localhost:7687')
@@ -25,16 +33,32 @@ class Settings(BaseSettings):
     faust_broker: str = os.environ.get('FAUST_BROKER', 'kafka://kafka:9092')
 
     # Processor settings
-    high_velocity_ip_window_size: int = int(os.environ.get('HIGH_VELOCITY_IP_WINDOW_SIZE', '5'))
-    high_velocity_ip_window_expires: int = int(os.environ.get('HIGH_VELOCITY_IP_WINDOW_EXPIRES', '60'))
-    high_velocity_login_window_size: int = int(os.environ.get('HIGH_VELOCITY_LOGIN_WINDOW_SIZE', '5'))
-    high_velocity_login_window_expires: int = int(os.environ.get('HIGH_VELOCITY_LOGIN_WINDOW_EXPIRES', '60'))
+    high_velocity_ip_window_size: int = int(
+        os.environ.get(
+            'HIGH_VELOCITY_IP_WINDOW_SIZE', 
+            '5'))
+    high_velocity_ip_window_expires: int = int(
+        os.environ.get(
+            'HIGH_VELOCITY_IP_WINDOW_EXPIRES', 
+            '60'))
+    high_velocity_login_window_size: int = int(
+        os.environ.get(
+            'HIGH_VELOCITY_LOGIN_WINDOW_SIZE', 
+            '5'))
+    high_velocity_login_window_expires: int = int(
+        os.environ.get(
+            'HIGH_VELOCITY_LOGIN_WINDOW_EXPIRES', 
+            '60'))
 
     # Google Maps settings
     google_maps_api_key: str = os.environ.get('GOOGLE_MAPS_API_KEY', '')
     google_maps_enabled: bool = os.environ.get('GOOGLE_MAPS_ENABLED', 'false').lower() == 'true'
 
     class Config:
+        """
+        Specification of the .env file and encoding.
+        """
+
         env_file = '.env'
         env_file_encoding = 'utf-8'
 

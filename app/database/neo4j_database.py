@@ -1,7 +1,12 @@
+"""
+Neo4j graph database
+"""
+
 from neo4j import GraphDatabase
+from app.database.database_interface import GraphDatabaseInterface
 from app.config.settings import settings
 
-class Neo4jDatabase:
+class Neo4jDatabase(GraphDatabaseInterface):
     def __init__(self, uri=None, user=None, password=None):
         self.driver = GraphDatabase.driver(
             uri or settings.neo4j_uri,

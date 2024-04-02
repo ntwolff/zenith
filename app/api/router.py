@@ -1,3 +1,7 @@
+"""
+FastAPI Router
+"""
+
 from fastapi import APIRouter
 from app.api.endpoints.v2 import admin, fraud
 

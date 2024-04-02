@@ -1,7 +1,11 @@
-from pydantic import BaseModel
-from app.models.v2.address import Address
+"""
+Customer models
+"""
+
 from typing import Optional
 from datetime import date
+from pydantic import BaseModel
+from app.models.v2.address import Address
 
 class Customer(BaseModel):
     uid: str

@@ -1,9 +1,18 @@
+"""
+Base Service (Graph Database)
+
+***
+
+@TODO:
+- Rename `record` to `node`
+"""
+
 from abc import ABC
-from app.database.database_interface import DatabaseInterface
+from app.database.database_interface import GraphDatabaseInterface
 import pydantic
 
 class BaseService(ABC):
-    def __init__(self, database: DatabaseInterface):
+    def __init__(self, database: GraphDatabaseInterface):
         self.db = database
 
     def create(self, label: str, properties: dict):

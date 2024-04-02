@@ -1,11 +1,19 @@
+"""
+Address Service
+"""
+
+import logging
+from googlemaps import Client
 from app.services.base_service import BaseService
 from app.models.v2.address import Address
-from googlemaps import Client
 from app.config.settings import settings
-import logging
 
 class AddressService(BaseService):
     def validate_address(self, address: Address) -> Address:
+        """
+        Validate address using Google Maps API
+        """
+
         if not settings.google_maps_enabled:
             return address
 
@@ -54,15 +62,21 @@ class AddressService(BaseService):
 
         return address
 
-    # https://developers.google.com/maps/documentation/address-validation/build-validation-logic
     def is_valid_address(self, gmaps_result) -> bool:
+        """
+        Google Maps response validation logic
+        """
+
         verdict = gmaps_result['result']['verdict']
 
         if 'addressComplete' not in verdict or verdict['validationGranularity'] == 'OTHER':
-            return False
-        elif verdict['addressComplete'] and ('hasUnconfirmedComponents' in verdict or 'hasInferredComponents' in verdict or 'hasReplacedComponents' in verdict):
-            return True  # @TODO: This may require more confirmation
+            False
+        elif verdict['addressComplete'] and (
+            'hasUnconfirmedComponents' in verdict 
+            or 'hasInferredComponents' in verdict 
+            or 'hasReplacedComponents' in verdict):
+            True  # @TODO: Additional confirmation
         elif verdict['addressComplete'] and verdict['validationGranularity'] == 'APPROXIMATE':
-            return True
+            True
         else:
-            return False  # Unknown scenario
+            False  # Unknown scenario

@@ -1,6 +1,10 @@
+"""
+Abstract database interfaces
+"""
+
 from abc import ABC, abstractmethod
 
-class DatabaseInterface(ABC):
+class GraphDatabaseInterface(ABC):
     @abstractmethod
     def execute_query(self, query, **kwargs):
         pass

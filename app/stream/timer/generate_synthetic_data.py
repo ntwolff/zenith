@@ -1,24 +1,29 @@
+"""
+Synthentic Data Generation
+
+***
+
+Features:
+- Fake event data
+- Random re-use of data
+- Sends to Event topic
+
+@TODO: 
+- Move data generation to a util class
+"""
+
+import random
+import asyncio
+from faker import Faker
 from app.config.settings import settings
 from app.stream.faust_app import app
 from app.stream.topic import event_topic
-from app.models.v2 import Event, CustomerEventType, ApplicationEventType, Customer, Device, Address, Application, EmploymentType, SourceType, IpAddress
-from faker import Faker
-import random
-import asyncio
-from app.stream.utils.logger import log_timer_message
-
-"""
-Synthentic data generation
-
-Features:
-- Creates fake data for customer and application events.
-- Creates customer registrations a portion of the time, otherwise re-uses existing customers for login and application submission events.
-- Randomly decides whether to create new values or re-use existing values to simulate fraud rings.
-- Sends the generated events to the event topic.
-
-@TODO: Move data generation into a utility class
-@TODO: Explore synthetic data generation tool (e.g. Mostly.ai)
-"""
+from app.models.v2.event import Event, CustomerEventType, ApplicationEventType
+from app.models.v2.customer import Customer
+from app.models.v2.user import Device, IpAddress
+from app.models.v2.address import Address
+from app.models.v2.application import Application, EmploymentType, SourceType
+from app.stream.util.loggers import timer_logger
 
 # Initialize Faker
 fake = Faker()
@@ -26,7 +31,7 @@ fake = Faker()
 
 # Dictionary to store customer states and reusable values
 customer_states = {}
-used_customers, used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], [], []
+used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], []
 
 
 # Faust timer running on a static interval (in seconds)
@@ -52,9 +57,11 @@ async def generate_synthetic_data() -> None:
             customer_event = await generate_fake_customer_login(customer_uid)
             await send_event(event_topic, customer_event)
             customer_states[customer_uid] = CustomerEventType.CUSTOMER_LOGIN
+        
         elif customer_state == CustomerEventType.CUSTOMER_LOGIN:
             # Randomly decide whether to create a login event or an application event
             event_type = random.choice([CustomerEventType.CUSTOMER_LOGIN, ApplicationEventType.APPLICATION_SUBMISSION])
+            
             if event_type == CustomerEventType.CUSTOMER_LOGIN:
                 # Randomly decide whether to create a login event
                 if random.random() < 0.3:
@@ -67,10 +74,10 @@ async def generate_synthetic_data() -> None:
                     await send_event(event_topic, application_event)
 
 
-async def send_event(topic, event: Event):    
+async def send_event(topic, event: Event):
     """Send an event to the specified topic."""
     await topic.send(value=event)
-    log_timer_message("generate_synthetic_data", topic, event)
+    timer_logger("generate_synthetic_data", topic, event)
 
 
 async def generate_fake_customer_registration() -> Event:
@@ -118,12 +125,14 @@ async def generate_fake_application_event(customer_uid: str) -> Event:
 # Utility functions to get or create reusable values
 
 def get_or_create_value(collection, create_func):
+    value = None
     if collection and random.random() < 0.2:
-        return random.choice(collection)
+        value = random.choice(collection)
     else:
         value = create_func() if callable(create_func) else create_func
         collection.append(value)
-        return value
+    
+    return value
 
 
 def get_or_create_device():

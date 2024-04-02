@@ -1,3 +1,7 @@
+"""
+Base models
+"""
+
 from enum import Enum, EnumMeta
 
 class MetaEnum(EnumMeta):
@@ -6,8 +10,17 @@ class MetaEnum(EnumMeta):
             cls(item)
         except ValueError:
             return False
-        return True    
+        return True
 
 
 class BaseEnum(Enum, metaclass=MetaEnum):
+    """
+    Iterable base class for Enum classes.
+
+    ***
+
+    Usage:
+    - Ex. `if ("type" in ExampleEnum)`
+    """
+    
     pass

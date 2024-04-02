@@ -1,3 +1,7 @@
+"""
+setuptools Build Configuration
+"""
+
 from setuptools import find_packages, setup
 from pathlib import Path
 
@@ -42,9 +46,9 @@ setup(
             'zenith = app.stream.faust_app:main',
         ],
         'faust.codecs': [
-            'event = app.stream.topic.event:event_serializer',
-            'graph_task = app.stream.topic.admin_task:admin_task_serializer',
-            'risk_signal = app.stream.topic.risk_signal:risk_signal_serializer',
+            'event = app.stream.topic.event:EventSerializer',
+            'graph_task = app.stream.topic.admin_task:AdminTaskSerializer',
+            'risk_signal = app.stream.topic.risk_signal:RiskSignalSerializer',
         ],
     },
 )

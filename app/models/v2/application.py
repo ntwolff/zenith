@@ -1,6 +1,10 @@
+"""
+Application models
+"""
+
+from typing import Optional
 from pydantic import BaseModel
 from app.models.v2.base import BaseEnum
-from typing import Optional
 
 class SourceType(BaseEnum):
     CREDITKARMA = "creditkarma"
@@ -18,7 +22,8 @@ class EmploymentType(BaseEnum):
     OTHER = "other"
 
 class Application(BaseModel):
-    uid: str 
+    uid: str
     source: Optional[SourceType] = None
     income: Optional[float] = None
     employment_status: Optional[EmploymentType] = None
+

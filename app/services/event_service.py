@@ -1,3 +1,7 @@
+"""
+Event Service
+"""
+
 from app.services.base_service import BaseService
 from app.models.v2 import Event
 

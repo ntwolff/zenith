@@ -1,7 +1,10 @@
 """
-Fraud related endpoints for yielding insights from the graph.
+Fraud API endpoints
 
-@TODO: Migrate to graph data science library
+***
+
+@TODO: 
+- Migrate to GDS Python library
 """
 
 from fastapi import APIRouter, HTTPException
@@ -15,13 +18,11 @@ graph_database = Neo4jDatabase()
 @router.get("/page-rank", summary="Get page rank scores", response_model=dict)
 def get_page_rank(limit: int = 25):
     """
-    ***Demonstrative of Neo4j Graph Data Science functionality***
+    Demonstration of Neo4j GDS via the Page Rank algorithm.
 
-    Get the page rank scores of nodes in the graph:
-    - Customer
-    - Device
-    - IpAddress
-    - Address
+    ***
+
+    Get the page rank scores of nodes in the graph.
 
     Parameters:
     - **limit**: The maximum number of page rank scores to return (default: 25).
@@ -45,9 +46,11 @@ def get_page_rank(limit: int = 25):
 
             result = session.run(query)
             records = result.data()
-            
-            risk_scores = [{"label": record["label"], "id": record["id"], "properties": record["properties"], "score": record["score"]} for record in records]
-            
+
+            risk_scores = [{
+                "label": record["label"], "id": record["id"], "properties": record["properties"], 
+                "score": record["score"]} for record in records]
+
             return {"page_rank_scores": risk_scores}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}") from e

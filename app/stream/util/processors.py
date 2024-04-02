@@ -1,9 +1,16 @@
+"""
+Stream Processing Utilities
+"""
+
 from app.models.v2 import Event, CustomerEventType, ApplicationEventType
 from app.services import RecordService, CustomerService, EventService, AddressService
-from app.database.database_interface import DatabaseInterface
+from app.database.database_interface import GraphDatabaseInterface
 
 class GraphEventProcessor:
-    def __init__(self, db: DatabaseInterface):
+    """
+    Processor to integrate an event into the graph database.
+    """
+    def __init__(self, db: GraphDatabaseInterface):
         self.c_service = CustomerService(db)
         self.e_service = EventService(db)
         self.r_service = RecordService(db)

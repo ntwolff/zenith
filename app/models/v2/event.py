@@ -1,10 +1,13 @@
+"""
+Event models
+"""
+
+from typing import Optional
 from pydantic import BaseModel
 from app.models.v2.base import BaseEnum
-from app.models.v2.device import Device
-from app.models.v2.ip_address import IpAddress
+from app.models.v2.user import Device, IpAddress
 from app.models.v2.customer import Customer
 from app.models.v2.application import Application
-from typing import Optional
 
 class CustomerEventType(BaseEnum):
     CUSTOMER_REGISTRATION = "customer_registration"

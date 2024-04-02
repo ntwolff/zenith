@@ -1,3 +1,7 @@
+"""
+IP Velocity Table
+"""
+
 from app.stream.faust_app import faust_app
 from app.config.settings import settings
 from datetime import timedelta

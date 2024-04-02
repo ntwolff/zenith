@@ -1,6 +1,10 @@
+"""
+Fraud models
+"""
+
+from enum import Enum
 from pydantic import BaseModel
 from app.models.v2.event import Event
-from enum import Enum
 
 class RiskSignalType(Enum):
     IP_VELOCITY = 'ip_velocity'

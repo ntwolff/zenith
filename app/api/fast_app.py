@@ -1,21 +1,25 @@
+"""
+FastAPI App
+"""
+
 # from app.stream.faust_app import faust_app
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.api.router import router as api_router
-import asyncio
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    #faust_app.discover()
-    #await asyncio.ensure_future(faust_app.start(), loop=asyncio.get_event_loop())
+    """
+    FastAPI context manager
+    """
+    #@TODO: Pre start-up
     yield
-    #await faust_app.stop()
+    #@TODO: Pre shut-down
 
-# FastAPI
-app = fastapi_app = FastAPI(
+app = FastAPI(
     lifespan=lifespan,
     title="Zenith API",
     description="Detect fraudulent activity in near real-time.",
     version="0.0.1",
 )
-fastapi_app.include_router(api_router, prefix="/api")
+app.include_router(api_router, prefix="/api")
