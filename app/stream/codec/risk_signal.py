@@ -13,7 +13,7 @@ class RiskSignalSerializer(codecs.Codec):
         super().__init__()
 
     def _dumps(self, s: RiskSignal) -> bytes:
-        return s.model_dump_json().encode('utf-8')
+        return s.model_dump_json(by_alias=True).encode('utf-8')
 
     def _loads(self, s: bytes) -> RiskSignal:
         return RiskSignal.parse_raw(s.decode('utf-8'))
