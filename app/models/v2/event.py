@@ -26,7 +26,7 @@ class Event(BaseModel):
         arbitrary_types_allowed=True)
 
     uid: str
-    type: Union[CustomerEventType, ApplicationEventType, None] = Field(..., alias='event_type')
+    event_type: Union[CustomerEventType, ApplicationEventType, None]
     timestamp: int
     device: Device
     ip_address: IpAddress

@@ -27,7 +27,7 @@ def _log_info_message(actor_type, actor, topic, model:BaseModel):
     ***
     {actor_type}: {actor}
     TOPIC: {topic}
-    TYPE: {model.__class__.__name__} ({model.type})
+    MODEL: {model.__class__.__name__}
     IDENTIFIER: {model.uid}
     ***""")
 
@@ -38,6 +38,6 @@ def _log_warning_message(actor_type, actor, topic, model:BaseModel, warning):
     ***
     {actor_type}: {actor}
     TOPIC: {topic}
-    TYPE: {model.__class__.__name__} ({model.type})
+    MODEL: {model.__class__.__name__}
     IDENTIFIER: {model.uid}
     ***""")

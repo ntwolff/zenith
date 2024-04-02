@@ -18,7 +18,7 @@ async def ip_velocity_detection(events):
         if ip_velocity_table[event.ip_address.ipv4].now() > 1:
             payload = RiskSignal(
                 uid=str(uuid4()),
-                type=RiskSignalType.IP_VELOCITY,
+                signal_type=RiskSignalType.IP_VELOCITY,
                 event=event
             )
             await risk_signal_topic.send(value=payload)
@@ -28,13 +28,13 @@ async def ip_velocity_detection(events):
 @faust_app.agent(event_topic)
 async def login_velocity_detection(events):
     async for event in events.group_by(get_customer_uid, name='customer'):
-        if not event.type == CustomerEventType.CUSTOMER_LOGIN:
+        if not event.event_type == CustomerEventType.CUSTOMER_LOGIN:
             continue
         login_velocity_table[event.customer.uid] += 1
         if login_velocity_table[event.customer.uid].now() > 1:
             payload = RiskSignal(
                 uid=str(uuid4()),
-                type=RiskSignalType.LOGIN_VELOCITY,
+                signal_type=RiskSignalType.LOGIN_VELOCITY,
                 event=event
             )
             await risk_signal_topic.send(value=payload)

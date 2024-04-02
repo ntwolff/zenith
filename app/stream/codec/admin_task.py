@@ -19,7 +19,7 @@ class AdminTaskSerializer(codecs.Codec):
         return AdminTask.parse_raw(s.decode('utf-8'))
     
     def _generate_json_schema_codec(self):
-        logging.info(AdminTask.schema_json(indent=2))
+        #logging.info(AdminTask.schema_json(indent=2))
         admin_task_schema = schema.JsonSchema(AdminTask.schema_json())
         client = SchemaRegistryClient(url=settings.kafka_schema_registry_url)
         schema_id = client.register("admin-tasks", admin_task_schema, schema_type="JSON")

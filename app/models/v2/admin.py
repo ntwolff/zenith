@@ -12,5 +12,5 @@ class AdminTask(BaseModel):
     Zenith Admin Task Model
     """
     uid: str
-    type: AdminTaskType
+    task_type: AdminTaskType
     timestamp: int

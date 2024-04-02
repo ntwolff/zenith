@@ -12,5 +12,5 @@ class RiskSignalType(BaseEnum):
 
 class RiskSignal(BaseModel):
     uid: str
-    type: RiskSignalType
+    signal_type: RiskSignalType
     event: Event = Field(...)

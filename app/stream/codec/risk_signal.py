@@ -19,7 +19,7 @@ class RiskSignalSerializer(codecs.Codec):
         return RiskSignal.parse_raw(s.decode('utf-8'))
     
     def _generate_json_schema_codec(self):
-        logging.info(RiskSignal.schema_json(indent=2))
+        #logging.info(RiskSignal.schema_json(indent=2))
         risk_signal_schema = schema.JsonSchema(RiskSignal.schema_json())
         client = SchemaRegistryClient(url=settings.kafka_schema_registry_url)
         schema_id = client.register("risk-signals", risk_signal_schema, schema_type="JSON")

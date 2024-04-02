@@ -31,7 +31,7 @@ class GraphEventProcessor:
         self.r_service.upsert_record(ip_address)
         self.r_service.connect_records(event, ip_address, "HAS")
 
-        if (event.type in CustomerEventType) or (event.type in ApplicationEventType):
+        if (event.event_type in CustomerEventType) or (event.event_type in ApplicationEventType):
             #customer
             customer = event.customer
             self.c_service.upsert_record(customer)
@@ -50,7 +50,7 @@ class GraphEventProcessor:
             self.c_service.link_on_pii('phone', customer.phone)
             self.c_service.link_on_pii('ssn', customer.ssn)
 
-        if event.type in ApplicationEventType:
+        if event.event_type in ApplicationEventType:
             #application
             application = event.application
             self.r_service.upsert_record(application)

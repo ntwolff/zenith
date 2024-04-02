@@ -9,7 +9,7 @@ class EventService(BaseService):
     def create_record(self, event: Event):
         properties = {
             "uid": event.uid,
-            "type": event.type,
+            "event_type": event.event_type,
             "timestamp": event.timestamp
         }
         label = event.__class__.__name__

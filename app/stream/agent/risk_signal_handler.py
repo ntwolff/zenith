@@ -16,7 +16,7 @@ ip_address_service = IpAddressService(graph_database)
 @faust_app.agent(risk_signal_topic)
 async def risk_signal_handler(signals):
     async for signal in signals:
-        if signal.type == RiskSignalType.LOGIN_VELOCITY:
+        if signal.signal_type == RiskSignalType.LOGIN_VELOCITY:
             customer_service.mark_as_risky(
                 uid=signal.event.customer.uid,
                 reason=RiskSignalType.LOGIN_VELOCITY.value)
@@ -25,7 +25,7 @@ async def risk_signal_handler(signals):
                 risk_signal_topic,
                 signal)
 
-        elif signal.type == RiskSignalType.IP_VELOCITY:
+        elif signal.signal_type == RiskSignalType.IP_VELOCITY:
             ip_address_service.mark_as_risky(
                 uid=signal.event.ip_address.uid,
                 reason=RiskSignalType.IP_VELOCITY.value)
@@ -34,7 +34,7 @@ async def risk_signal_handler(signals):
                 risk_signal_topic,
                 signal)
 
-        elif signal.type == RiskSignalType.APPLICATION_FRAUD:
+        elif signal.signal_type == RiskSignalType.APPLICATION_FRAUD:
             # @TODO: Implement.
             agent_logger(
                 "risk_signal_handler", 
@@ -43,4 +43,4 @@ async def risk_signal_handler(signals):
                 warning="Not implemented")
 
         else:
-            raise ValueError(f"Unknown signal type: {signal.type}")
+            raise ValueError(f"Unknown signal type: {signal.signal_type}")
