@@ -7,11 +7,11 @@ from app.models.v2 import Customer
 from .base_service import BaseService
 
 class CustomerService(BaseService):
-    def upsert_record(self, customer: Customer):
-        properties = customer.dict()
+    def upsert_record(self, record: Customer):
+        properties = record.dict()
         properties.pop("address")
-        label = customer.__class__.__name__
-        super().upsert(label, "uid", customer.uid, properties)
+        label = record.__class__.__name__
+        super().upsert(label, "uid", record.uid, properties)
 
     def mark_as_risky(self, uid: str, reason: str):
         properties = {

@@ -57,11 +57,14 @@ async def generate_synthetic_data() -> None:
             customer_event = await generate_fake_customer_login(customer_uid)
             await send_event(event_topic, customer_event)
             customer_states[customer_uid] = CustomerEventType.CUSTOMER_LOGIN
-        
+
         elif customer_state == CustomerEventType.CUSTOMER_LOGIN:
             # Randomly decide whether to create a login event or an application event
-            event_type = random.choice([CustomerEventType.CUSTOMER_LOGIN, ApplicationEventType.APPLICATION_SUBMISSION])
-            
+            event_type = random.choice([
+                    CustomerEventType.CUSTOMER_LOGIN,
+                    ApplicationEventType.APPLICATION_SUBMISSION
+                ])
+
             if event_type == CustomerEventType.CUSTOMER_LOGIN:
                 # Randomly decide whether to create a login event
                 if random.random() < 0.3:

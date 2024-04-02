@@ -7,9 +7,9 @@ Base Service (Graph Database)
 - Rename `record` to `node`
 """
 
+import pydantic
 from abc import ABC
 from app.database.database_interface import GraphDatabaseInterface
-import pydantic
 
 class BaseService(ABC):
     def __init__(self, database: GraphDatabaseInterface):
@@ -37,14 +37,26 @@ class BaseService(ABC):
         self.upsert(record.__class__.__name__, "uid", record.uid, record.dict())
 
 
-    def connect(self, from_label:str, from_id_key:str, from_id_val:str, to_label: str, to_id_key: str, to_id_val: str, rel_type: str):
+    def connect(self, 
+            from_label:str, from_id_key:str, from_id_val:str, 
+            to_label: str, to_id_key: str, to_id_val: str, 
+            rel_type: str):   
         query = """
             MATCH (f:{from_label} {{{from_id_key}: "{from_id_val}"}})
             MATCH (t:{to_label} {{{to_id_key}: "{to_id_val}"}})
             MERGE (f)-[r:{rel_type}]->(t)
-        """.format(from_label=from_label, from_id_key=from_id_key, from_id_val=from_id_val, to_label=to_label, to_id_key=to_id_key, to_id_val=to_id_val, rel_type=rel_type)
+        """.format(
+            from_label=from_label, from_id_key=from_id_key, from_id_val=from_id_val, 
+            to_label=to_label, to_id_key=to_id_key, to_id_val=to_id_val, 
+            rel_type=rel_type)
         self.db.execute_query(query)
 
 
-    def connect_records(self, from_model: pydantic.BaseModel, to_model: pydantic.BaseModel, rel_type: str):
-        self.connect(from_model.__class__.__name__, "uid", from_model.uid, to_model.__class__.__name__, "uid", to_model.uid, rel_type)
+    def connect_records(self, 
+                        from_model: pydantic.BaseModel, 
+                        to_model: pydantic.BaseModel, 
+                        rel_type: str):
+        self.connect(
+            from_model.__class__.__name__, "uid", from_model.uid, 
+            to_model.__class__.__name__, "uid", to_model.uid, 
+            rel_type)

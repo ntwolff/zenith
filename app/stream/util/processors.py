@@ -49,7 +49,7 @@ class GraphEventProcessor:
             self.c_service.link_on_pii('email', customer.email)
             self.c_service.link_on_pii('phone', customer.phone)
             self.c_service.link_on_pii('ssn', customer.ssn)
-        
+
         if event.type in ApplicationEventType:
             #application
             application = event.application

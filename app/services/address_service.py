@@ -68,15 +68,18 @@ class AddressService(BaseService):
         """
 
         verdict = gmaps_result['result']['verdict']
+        is_valid = None
 
         if 'addressComplete' not in verdict or verdict['validationGranularity'] == 'OTHER':
-            False
+            is_valid = False
         elif verdict['addressComplete'] and (
-            'hasUnconfirmedComponents' in verdict 
+            'hasUnconfirmedComponents' in verdict
             or 'hasInferredComponents' in verdict 
             or 'hasReplacedComponents' in verdict):
-            True  # @TODO: Additional confirmation
+            is_valid = True  # @TODO: Additional confirmation
         elif verdict['addressComplete'] and verdict['validationGranularity'] == 'APPROXIMATE':
-            True
+            is_valid = True
         else:
-            False  # Unknown scenario
+            is_valid = False  # Unknown scenario
+        
+        return is_valid

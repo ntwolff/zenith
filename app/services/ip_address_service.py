@@ -2,8 +2,8 @@
 Ip Address Service
 """
 
-from .base_service import BaseService
 from datetime import datetime
+from .base_service import BaseService
 
 class IpAddressService(BaseService):
     def mark_as_risky(self, uid: str, reason: str):

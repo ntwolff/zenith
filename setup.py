@@ -2,8 +2,8 @@
 setuptools Build Configuration
 """
 
-from setuptools import find_packages, setup
 from pathlib import Path
+from setuptools import find_packages, setup
 
 # -*- Installation Requires -*-
 
@@ -21,8 +21,8 @@ def _pip_requirement(req, *root):
 def _reqs(*f):
     path = (Path.cwd() / '').joinpath(*f)
     with path.open() as fh:
-        reqs = [strip_comments(l) for l in fh.readlines()]
-        return [_pip_requirement(r, *f[:-1]) for r in reqs if r]
+        req_items = [strip_comments(l) for l in fh.readlines()]
+        return [_pip_requirement(r, *f[:-1]) for r in req_items if r]
 
 
 def reqs(*f):
