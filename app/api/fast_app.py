@@ -8,13 +8,13 @@ from fastapi import FastAPI
 from app.api.router import router as api_router
 
 @asynccontextmanager
-async def lifespan(fastapi_app: FastAPI):
+async def lifespan(fastapi_app: FastAPI): # pylint: disable=unused-argument
     """
     FastAPI context manager
     """
-    #@TODO: Pre start-up
+    #@TODO: pre start-up tasks
     yield
-    #@TODO: Pre shut-down
+    #@TODO: pre shut-down tasks
 
 app = FastAPI(
     lifespan=lifespan,
