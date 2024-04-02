@@ -1,7 +1,6 @@
 """
-Base models
+Base classes for models
 """
-
 from enum import Enum, EnumMeta
 
 class MetaEnum(EnumMeta):
@@ -13,7 +12,7 @@ class MetaEnum(EnumMeta):
         return True
 
 
-class BaseEnum(Enum, metaclass=MetaEnum):
+class BaseEnum(str, Enum, metaclass=MetaEnum):
     """
     Iterable base class for Enum classes.
 
@@ -23,3 +22,4 @@ class BaseEnum(Enum, metaclass=MetaEnum):
     - Ex. `if ("type" in ExampleEnum)`
     """
     pass # pylint: disable=unnecessary-pass
+

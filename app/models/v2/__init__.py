@@ -1,5 +1,5 @@
 """
-Model imports
+Module imports
 """
 from app.models.v2.address import Address
 from app.models.v2.user import Device, IpAddress

@@ -87,7 +87,7 @@ async def generate_fake_customer_registration() -> Event:
     """Generate a fake customer registration event."""
     return Event(
         uid=str(fake.uuid4()),
-        type=CustomerEventType.CUSTOMER_REGISTRATION.value,
+        type=CustomerEventType.CUSTOMER_REGISTRATION,
         timestamp=int(asyncio.get_running_loop().time()),
         customer=create_customer(),
         device=get_or_create_device(),
@@ -99,7 +99,7 @@ async def generate_fake_customer_login(customer_uid: str) -> Event:
     """Generate a fake customer login event."""
     return Event(
         uid=str(fake.uuid4()),
-        type=CustomerEventType.CUSTOMER_LOGIN.value,
+        type=CustomerEventType.CUSTOMER_LOGIN,
         timestamp=int(asyncio.get_running_loop().time()),
         customer=Customer(uid=customer_uid),
         device=get_or_create_device(),
@@ -111,7 +111,7 @@ async def generate_fake_application_event(customer_uid: str) -> Event:
     """Generate a fake application submission event."""
     return Event(
         uid=str(fake.uuid4()),
-        type=ApplicationEventType.APPLICATION_SUBMISSION.value,
+        type=ApplicationEventType.APPLICATION_SUBMISSION,
         timestamp=int(asyncio.get_running_loop().time()),
         customer=Customer(uid=customer_uid),
         application=Application(
@@ -125,7 +125,9 @@ async def generate_fake_application_event(customer_uid: str) -> Event:
     )
 
 
-# Utility functions to get or create reusable values
+# ----------------------------------------------
+# Helper functions
+# ----------------------------------------------
 
 def get_or_create_value(collection, create_func):
     value = None

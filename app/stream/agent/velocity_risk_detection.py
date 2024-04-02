@@ -12,7 +12,7 @@ from app.stream.util.loggers import agent_logger
 
 
 @faust_app.agent(event_topic)
-async def ip_velocity(events):
+async def ip_velocity_detection(events):
     async for event in events.group_by(get_event_ip_address, name='ip_address'):
         ip_velocity_table[event.ip_address.ipv4] += 1
         if ip_velocity_table[event.ip_address.ipv4].now() > 1:
@@ -22,13 +22,13 @@ async def ip_velocity(events):
                 event=event
             )
             await risk_signal_topic.send(value=payload)
-            agent_logger(RiskSignalType.IP_VELOCITY.value, event_topic, event)
+            agent_logger('ip_velocity_detection', event_topic, event)
 
 
 @faust_app.agent(event_topic)
-async def login_velocity(events):
+async def login_velocity_detection(events):
     async for event in events.group_by(get_customer_uid, name='customer'):
-        if not event.type == CustomerEventType.CUSTOMER_LOGIN.value:
+        if not event.type == CustomerEventType.CUSTOMER_LOGIN:
             continue
         login_velocity_table[event.customer.uid] += 1
         if login_velocity_table[event.customer.uid].now() > 1:
@@ -38,7 +38,7 @@ async def login_velocity(events):
                 event=event
             )
             await risk_signal_topic.send(value=payload)
-            agent_logger(RiskSignalType.LOGIN_VELOCITY.value, event_topic, event)
+            agent_logger('login_velocity_detection', event_topic, event)
 
 
 async def get_event_ip_address(event:Event) -> str:

@@ -1,9 +1,8 @@
 """
 Event models
 """
-
-from typing import Optional
-from pydantic import BaseModel
+from typing import Union, Optional
+from pydantic import BaseModel, Field
 from app.models.v2.base import BaseEnum
 from app.models.v2.user import Device, IpAddress
 from app.models.v2.customer import Customer
@@ -17,10 +16,16 @@ class ApplicationEventType(BaseEnum):
     APPLICATION_SUBMISSION = "application_submission"
 
 class Event(BaseModel):
+    """
+    Zenith Event Model
+    """
     uid: str
-    type: str
+    type: Union[CustomerEventType, ApplicationEventType]
     timestamp: int
-    device: Device
-    ip_address: IpAddress
-    customer: Customer
-    application: Optional[Application] = None
+    device: Device = Field(...)
+    ip_address: IpAddress = Field(...)
+    customer: Customer = Field(...)
+    application: Optional[Application] = Field(None)
+
+    class Config:
+        title = "Event"

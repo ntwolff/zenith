@@ -2,8 +2,8 @@
 
 ## Practical
 -----------------------
-- Integrate schema registry via Pydantic -> JSON schema
-- Integrate ip information api (ipinfo.io).
+- Integrate schema registry via Pydantic -> JSON schema (python-schema-registry-client)
+- Integrate IP information api (ipinfo.io).
 - Create mocks for other data services (Threatmetrix, Transunion, etc.). 
 - Alerts and case management.
 - Bulk data upload of events.

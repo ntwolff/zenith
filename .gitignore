@@ -1,5 +1,6 @@
 # Python
 __pycache__/
+.pytest_cache/*
 *.py[cod]
 *.pyo
 *.pyd
@@ -30,13 +31,11 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# dotenv
-.env
-
 # Database
 *.db
 *.sqlite3
 
-# Folders
+# Other
+.env
 .old/
-.pytest_cache/
+.gptignore

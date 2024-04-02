@@ -1,7 +1,6 @@
 """
 User models
 """
-
 from pydantic import BaseModel
 
 class Device(BaseModel):
