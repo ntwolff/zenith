@@ -1,6 +1,5 @@
 [MESSAGES CONTROL]
 disable=
     too-few-public-methods
-    missing-class-docstring
-    missing-function-docstring
+    missing-docstring
     logging-fstring-interpolation
