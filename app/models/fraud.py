@@ -1,9 +1,7 @@
-"""
-Fraud models
-"""
+from typing import Optional
 from pydantic import BaseModel, Field
 from app.models.event import Event
-from app.models._base import BaseEnum
+from app.models.base import BaseEnum
 
 class RiskSignalType(BaseEnum):
     IP_VELOCITY = 'ip_velocity'
@@ -14,3 +12,4 @@ class RiskSignal(BaseModel):
     uid: str
     signal_type: RiskSignalType
     event: Event = Field(...)
+    fraud_score: Optional[float] = None

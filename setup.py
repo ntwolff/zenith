@@ -47,7 +47,6 @@ setup(
         ],
         'faust.codecs': [
             'json_events = app.stream.codecs:event_codec',
-            'json_admin_tasks = app.stream.codecs:admin_task_codec',
             'json_risk_signals = app.stream.codecs:risk_signal_codec',
         ],
     },

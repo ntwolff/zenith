@@ -30,6 +30,22 @@ services:
     networks:
       - zenith
 
+  # redis:
+  #   image: redis:6.2
+  #   restart: always
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_data:/data
+
+  # mongodb:
+  #   image: mongo:4.4
+  #   restart: always
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongodb_data:/data/db
+
   zenith-api:
     build:
       context: .
@@ -51,6 +67,10 @@ services:
       - neo4j
     networks:
       - zenith
+
+volumes:
+  redis_data:
+  mongodb_data:
 
 networks:
   zenith:

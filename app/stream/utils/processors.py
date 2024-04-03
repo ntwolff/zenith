@@ -1,49 +1,46 @@
-"""
-Stream Processing Utilities
-"""
-
 from app.models import Event, CustomerEventType, ApplicationEventType
-from app.services import ModelService, CustomerService, EventService, AddressService
-from app.database.database_interface import GraphDatabaseInterface
+from app.services import GraphService, CustomerService, EventService
+from app.services.external import GoogleMapsService, IpInfoService
+from app.database.base import BaseDatabase
 
 class GraphEventProcessor:
-    """
-    Processor to integrate an event into the graph database.
-    """
-    def __init__(self, db: GraphDatabaseInterface):
-        self.m_service = ModelService(db)
+    def __init__(self, db: BaseDatabase):
+        self.g_service = GraphService(db)
         self.c_service = CustomerService(db)
         self.e_service = EventService(db)
-        self.a_service = AddressService(db)
+        self.gmaps_service = GoogleMapsService()
+        self.ip_info_service = IpInfoService()
 
     def process_event(self, event: Event):
         device = event.device
         ip_address = event.ip_address
+        assert device and ip_address, "Missing required event fields"
 
         #event
         self.e_service.create_record(event)
 
         #device
-        self.m_service.upsert_record(device)
-        self.m_service.connect_records(event, device, "HAS")
+        self.g_service.upsert_record(device)
+        self.g_service.connect_records(event, device, "HAS")
 
         #ip_address
-        self.m_service.upsert_record(ip_address)
-        self.m_service.connect_records(event, ip_address, "HAS")
+        ip_info = self.ip_info_service.enrich(event.ip_address) #external service enrich
+        self.g_service.upsert_record(ip_address)
+        self.g_service.connect_records(event, ip_address, "HAS")
 
         if (event.event_type in CustomerEventType) or (event.event_type in ApplicationEventType):
             #customer
             customer = event.customer
             self.c_service.upsert_record(customer)
-            self.m_service.connect_records(customer, event, "PERFORMS")
-            self.m_service.connect_records(customer, device, "USED")
-            self.m_service.connect_records(customer, ip_address, "USED")
+            self.g_service.connect_records(customer, event, "PERFORMS")
+            self.g_service.connect_records(customer, device, "USED")
+            self.g_service.connect_records(customer, ip_address, "USED")
 
             ## customer.address
             if customer.address:
-                address = self.a_service.validate_address(customer.address)
-                self.m_service.upsert_record(address)
-                self.m_service.connect_records(customer, address, "RESIDES_AT")
+                address_info = self.gmaps_service.enrich(event.customer.address) #external service enrich
+                self.g_service.upsert_record(customer.address)
+                self.g_service.connect_records(customer, customer.address, "RESIDES_AT")
 
             #pii links
             self.c_service.link_on_pii('email', customer.email)
@@ -53,9 +50,9 @@ class GraphEventProcessor:
         if event.event_type in ApplicationEventType:
             #application
             application = event.application
-            self.m_service.upsert_record(application)
-            self.m_service.connect_records(event, application, "HAS")
-            self.m_service.connect_records(customer, application, "OWNS")
-            self.m_service.connect_records(application, event, "PERFORMS")
-            self.m_service.connect_records(application, device, "USED")
-            self.m_service.connect_records(application, ip_address, "USED")
+            self.g_service.upsert_record(application)
+            self.g_service.connect_records(event, application, "HAS")
+            self.g_service.connect_records(customer, application, "OWNS")
+            self.g_service.connect_records(application, event, "PERFORMS")
+            self.g_service.connect_records(application, device, "USED")
+            self.g_service.connect_records(application, ip_address, "USED")

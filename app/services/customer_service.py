@@ -1,27 +1,12 @@
-"""
-Customer Service
-"""
-
-from datetime import datetime
 from app.models import Customer
-from ._base import BaseService
+from .base import GraphService
 
-class CustomerService(BaseService):
+class CustomerService(GraphService):
     def upsert_record(self, record: Customer):
         properties = record.dict()
         properties.pop("address")
         label = record.__class__.__name__
         super().upsert(label, "uid", record.uid, properties)
-
-    def mark_as_risky(self, uid: str, reason: str):
-        properties = {
-            "risky": True,
-            "risky_since": datetime.now(),
-            "risky_reason": reason
-        }
-        label = "Customer"
-
-        super().upsert(label, "uid", uid, properties)
 
     def link_on_pii(self, pii_type, pii_value):
         query = """

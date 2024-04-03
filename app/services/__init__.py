@@ -1,8 +1,4 @@
-"""
-Module Imports
-"""
-from .address_service import AddressService
-from .customer_service import CustomerService
-from .event_service import EventService
-from .ip_address_service import IpAddressService
-from .model_service import ModelService
+from app.services.customer_service import *
+from app.services.event_service import *
+from app.services.base import *
+from app.services.fraud_service import *

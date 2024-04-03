@@ -1,7 +1,3 @@
-"""
-Stream Logging Utilities
-"""
-
 import logging
 from pydantic import BaseModel
 

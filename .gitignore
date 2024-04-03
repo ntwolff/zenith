@@ -18,6 +18,7 @@ build/
 env/
 venv/
 ENV/
+.env
 
 # IDEs
 .idea/
@@ -36,6 +37,7 @@ Thumbs.db
 *.sqlite3
 
 # Other
-.env
 .old/
 .gptignore
+.python-version
+compose-dev.yaml

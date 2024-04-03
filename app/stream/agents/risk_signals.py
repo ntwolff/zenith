@@ -1,54 +1,63 @@
-"""
-Faust Agents - Risk Signals
-"""
-
 from app.stream.faust_app import faust_app
 from app.stream.topics import risk_signal_topic
-from app.database.neo4j_database import Neo4jDatabase
-from app.models import RiskSignalType
-from app.services import CustomerService, IpAddressService
+from app.models import RiskSignal, RiskSignalType
+from app.services import FraudService
 from app.stream.utils.loggers import agent_logger
+from app.database.manager import DatabaseManager
+from app.database.repositories.graph import GraphRepository
+from app.config.settings import settings
+
 
 # ----------------------
-# Db Initialization
+# Init
 # ----------------------
 
-graph_database = Neo4jDatabase()
-customer_service = CustomerService(graph_database)
-ip_address_service = IpAddressService(graph_database)
+db_manager = DatabaseManager(settings)
+graph_repo = GraphRepository(db_manager)
+fraud_service = FraudService(graph_repo.db)
 
 # ----------------------
-# Agent Definitions
+# Agents
 # ----------------------
+
+def handle_login_velocity(signal:RiskSignal):
+    fraud_service.process_fraud(signal)
+    agent_logger("handler_login_velocity", risk_signal_topic, signal)
+
+
+def handle_ip_velocity(signal:RiskSignal):
+    fraud_service.process_fraud(signal)
+    agent_logger("handler_ip_velocity", risk_signal_topic, signal)
+
+
+def handle_application_fraud(signal:RiskSignal):
+    fraud_service.process_fraud(signal)
+    agent_logger("handle_application_fraud", risk_signal_topic, signal)
+
+
+RISK_SIGNAL_HANDLERS = {
+    RiskSignalType.LOGIN_VELOCITY: handle_login_velocity,
+    RiskSignalType.IP_VELOCITY: handle_ip_velocity,
+    RiskSignalType.APPLICATION_FRAUD: handle_application_fraud
+}
+
 
 @faust_app.agent(risk_signal_topic)
 async def risk_signal_handler(signals):
     async for signal in signals:
-        if signal.signal_type == RiskSignalType.LOGIN_VELOCITY:
-            customer_service.mark_as_risky(
-                uid=signal.event.customer.uid,
-                reason=RiskSignalType.LOGIN_VELOCITY.value)
+        try:
+            if not isinstance(signal, RiskSignal):
+                raise TypeError("Expected RiskSignal, got {type(signal)}")
+            else:
+                handler = RISK_SIGNAL_HANDLERS[signal.signal_type]
+                if handler is None:
+                    raise ValueError(f"Invalid signal or handler. Signal: {signal}, Handler: {handler}")
+                else:
+                    handler(signal)
+        except KeyError:
             agent_logger(
-                "risk_signal_handler", 
-                risk_signal_topic,
-                signal)
-
-        elif signal.signal_type == RiskSignalType.IP_VELOCITY:
-            ip_address_service.mark_as_risky(
-                uid=signal.event.ip_address.uid,
-                reason=RiskSignalType.IP_VELOCITY.value)
-            agent_logger(
-                "risk_signal_handler", 
-                risk_signal_topic,
-                signal)
-
-        elif signal.signal_type == RiskSignalType.APPLICATION_FRAUD:
-            # @TODO: Implement.
-            agent_logger(
-                "risk_signal_handler", 
-                risk_signal_topic,
-                signal,
-                warning="Not implemented")
-
-        else:
-            raise ValueError(f"Unknown signal type: {signal.signal_type}")
+                "risk_signal_handler",
+                risk_signal_topic, 
+                signal, 
+                warning=f"Unknown signal type: {signal.signal_type}"
+            )

@@ -1,174 +1,32 @@
-"""
-Synthentic Data Generation
-"""
 import random
 import asyncio
 from faker import Faker
 from app.config.settings import settings
 from app.stream.faust_app import app
 from app.stream.topics import event_topic
-from app.models.event import Event, CustomerEventType, ApplicationEventType
-from app.models.customer import Customer
-from app.models.user import Device, IpAddress
-from app.models.address import Address
-from app.models.application import Application, EmploymentType, SourceType
 from app.stream.utils.loggers import timer_logger
+from app.stream.utils.event_generator import FakeEvent
 
-# Initialize Faker
+# Initialize the Fakers
 fake = Faker()
+event_generator = FakeEvent(fake)
 
-
-# Scenario State Management
-customer_states = {}
-used_ips, used_devices, used_addresses, used_phones, used_emails = [], [], [], [], []
-
-
-@app.timer(1.0) # 1s Interval
+@app.timer(1.0)  # 1s Interval
 async def spawn_event_data() -> None:
     """Produce fake customer and application events."""
     if not settings.fake_data_generation_enabled:
         return
 
     # Randomly decide whether to create a new customer or use an existing one
-    if random.random() < 0.2 or not customer_states:
+    if random.random() < 0.2 or not event_generator.customer_states:
         # Create a new customer
-        customer_event = await generate_fake_customer_registration()
+        customer_event = await event_generator.generate_customer_registration_event()
         await send_event(event_topic, customer_event)
-        customer_states[customer_event.customer.uid] = CustomerEventType.CUSTOMER_REGISTRATION
     else:
         # Use an existing customer
-        customer_uid = random.choice(list(customer_states.keys()))
-        customer_state = customer_states[customer_uid]
+        await event_generator.generate_customer_event()
 
-        if customer_state == CustomerEventType.CUSTOMER_REGISTRATION:
-            # Simulate customer login event
-            customer_event = await generate_fake_customer_login(customer_uid)
-            await send_event(event_topic, customer_event)
-            customer_states[customer_uid] = CustomerEventType.CUSTOMER_LOGIN
-
-        elif customer_state == CustomerEventType.CUSTOMER_LOGIN:
-            # Randomly decide whether to create a login event or an application event
-            event_type = random.choice([
-                    CustomerEventType.CUSTOMER_LOGIN,
-                    ApplicationEventType.APPLICATION_SUBMISSION
-                ])
-
-            if event_type == CustomerEventType.CUSTOMER_LOGIN:
-                # Randomly decide whether to create a login event
-                if random.random() < 0.3:
-                    customer_event = await generate_fake_customer_login(customer_uid)
-                    await send_event(event_topic, customer_event)
-            else:
-                # Randomly decide whether to create an application event
-                if random.random() < 0.3:
-                    application_event = await generate_fake_application_event(customer_uid)
-                    await send_event(event_topic, application_event)
-
-
-async def send_event(topic, event: Event):
+async def send_event(topic, event):
     """Send an event to the specified topic."""
     await topic.send(value=event)
     timer_logger("generate_synthetic_data", topic, event)
-
-
-async def generate_fake_customer_registration() -> Event:
-    """Generate a fake customer registration event."""
-    return Event(
-        uid=str(fake.uuid4()),
-        event_type=CustomerEventType.CUSTOMER_REGISTRATION,
-        timestamp=int(asyncio.get_running_loop().time()),
-        customer=create_customer(),
-        device=get_or_create_device(),
-        ip_address=get_or_create_ip_address(),
-    )
-
-
-async def generate_fake_customer_login(customer_uid: str) -> Event:
-    """Generate a fake customer login event."""
-    return Event(
-        uid=str(fake.uuid4()),
-        event_type=CustomerEventType.CUSTOMER_LOGIN,
-        timestamp=int(asyncio.get_running_loop().time()),
-        customer=Customer(uid=customer_uid),
-        device=get_or_create_device(),
-        ip_address=get_or_create_ip_address(),
-    )
-
-
-async def generate_fake_application_event(customer_uid: str) -> Event:
-    """Generate a fake application submission event."""
-    return Event(
-        uid=str(fake.uuid4()),
-        event_type=ApplicationEventType.APPLICATION_SUBMISSION,
-        timestamp=int(asyncio.get_running_loop().time()),
-        customer=Customer(uid=customer_uid),
-        application=Application(
-            uid=str(fake.uuid4()),
-            source=fake.random_element(list(SourceType)),
-            income=fake.random_int(min=10000, max=200000),
-            employment_status=fake.random_element(list(EmploymentType)),
-        ),
-        device=get_or_create_device(),
-        ip_address=get_or_create_ip_address(),
-    )
-
-
-# ----------------------------------------------
-# Helper functions
-# ----------------------------------------------
-
-def get_or_create_value(collection, create_func):
-    value = None
-    if collection and random.random() < 0.2:
-        value = random.choice(collection)
-    else:
-        value = create_func() if callable(create_func) else create_func
-        collection.append(value)
-
-    return value
-
-
-def get_or_create_device():
-    return get_or_create_value(used_devices, lambda: Device(
-        uid=str(fake.uuid4()),
-        device_id=str(fake.uuid4()),
-        user_agent=fake.user_agent(),
-    ))
-
-
-def get_or_create_ip_address():
-    return get_or_create_value(used_ips, lambda: IpAddress(
-        uid=str(fake.uuid4()),
-        ipv4=fake.ipv4(),
-    ))
-
-
-def get_or_create_email():
-    return get_or_create_value(used_emails, fake.email)
-
-
-def get_or_create_phone():
-    return get_or_create_value(used_phones, fake.phone_number)
-
-
-def get_or_create_address():
-    return get_or_create_value(used_addresses, lambda: Address(
-        uid=str(fake.uuid4()),
-        street=fake.street_address(),
-        city=fake.city(),
-        state=fake.state_abbr(),
-        zip=fake.zipcode(),
-    ))
-
-
-def create_customer():
-    return Customer(
-        uid=str(fake.uuid4()),
-        email=get_or_create_email(),
-        phone=get_or_create_phone(),
-        first_name=fake.first_name(),
-        last_name=fake.last_name(),
-        date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=80),
-        ssn=fake.ssn(),
-        address = get_or_create_address()
-    )

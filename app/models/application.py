@@ -1,9 +1,6 @@
-"""
-Application models
-"""
 from typing import Optional
 from pydantic import BaseModel
-from app.models._base import BaseEnum
+from app.models.base import BaseEnum, FraudMixin
 
 class SourceType(BaseEnum):
     CREDITKARMA = "creditkarma"
@@ -20,7 +17,7 @@ class EmploymentType(BaseEnum):
     RETIRED = "retired"
     OTHER = "other"
 
-class Application(BaseModel):
+class Application(FraudMixin, BaseModel):
     uid: str
     source: Optional[SourceType] = None
     income: Optional[float] = None

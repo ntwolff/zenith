@@ -1,34 +1,46 @@
-"""
-Faust Agents - Customer/Application Events
-"""
 from uuid import uuid4
+import random
 from app.stream.faust_app import faust_app
 from app.stream.topics import risk_signal_topic, event_topic
 from app.stream.tables import ip_velocity_table, login_velocity_table
 from app.models.fraud import RiskSignal, RiskSignalType
-from app.models.event import Event, CustomerEventType
-from app.database.neo4j_database import Neo4jDatabase
+from app.models.event import Event, CustomerEventType, ApplicationEventType
 from app.stream.utils.loggers import agent_logger
 from app.stream.utils.processors import GraphEventProcessor
+from app.database.manager import DatabaseManager
+from app.database.repositories.graph import GraphRepository
+from app.config.settings import settings
 
 
 # ----------------------
-# Db Initialization
+# Init
 # ----------------------
 
-db = Neo4jDatabase()
-processor = GraphEventProcessor(db=Neo4jDatabase())
+db_manager = DatabaseManager(settings)
+graph_repo = GraphRepository(db_manager)
+processor = GraphEventProcessor(db=graph_repo.db)
 
 
 # ----------------------
-# Agent Definitions
+# Agents
 # ----------------------
+
+def process_event(event):
+    if (event.event_type not in CustomerEventType) and (event.event_type not in ApplicationEventType):
+        raise ValueError(f"Invalid event type: {event.event_type}")
+    if event.customer is None or event.device is None or event.ip_address is None:
+        raise ValueError("Missing required event fields")
+    processor.process_event(event)
+
 
 @faust_app.agent(event_topic)
 async def event_ingestion(events):
     async for event in events:
-        processor.process_event(event)
-        agent_logger("event_ingestion", event_topic, event)
+        try:
+            process_event(event)
+            agent_logger("event_ingestion", event_topic, event)
+        except ValueError as e:
+            agent_logger("event_ingestion", event_topic, event, warning=str(e))
 
 
 @faust_app.agent(event_topic)
@@ -39,7 +51,8 @@ async def ip_velocity_detection(events):
             payload = RiskSignal(
                 uid=str(uuid4()),
                 signal_type=RiskSignalType.IP_VELOCITY,
-                event=event
+                event=event,
+                fraud_score=random.uniform(0.1, 0.9)
             )
             await risk_signal_topic.send(value=payload)
             agent_logger('ip_velocity_detection', event_topic, event)
@@ -55,7 +68,8 @@ async def login_velocity_detection(events):
             payload = RiskSignal(
                 uid=str(uuid4()),
                 signal_type=RiskSignalType.LOGIN_VELOCITY,
-                event=event
+                event=event,
+                fraud_score=random.uniform(0.1, 0.9)
             )
             await risk_signal_topic.send(value=payload)
             agent_logger('login_velocity_detection', event_topic, event)
